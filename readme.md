@@ -1,12 +1,11 @@
+
+
 muse-node
 =========
 
-visualize your brainwave activity in the browser.
+A game maybe
 
-
-<a href="https://www.youtube.com/watch?v=-lCQAi0NKIc">
-![image](https://cloud.githubusercontent.com/assets/39191/4486873/75f7baaa-49ee-11e4-8828-60289bff5c7e.png)
-</a>
+![image](http://i.imgur.com/diQk2Gf.gif)
 
 # Running
 
@@ -21,9 +20,6 @@ visualize your brainwave activity in the browser.
 * Run `node server.js`
 * Serve the public folder however you like
 * You should be getting a live D3 visual of your brainwave EEG.
-
-![image](https://cloud.githubusercontent.com/assets/39191/4486882/c09f2fde-49ee-11e4-81c2-53c6039b585f.png)
-
 
 
 # Who
