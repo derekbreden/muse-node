@@ -16,7 +16,7 @@ app.use(express.static(__dirname + '/public'));
 
 var udpPort = new osc.UDPPort({
     localAddress: "127.0.0.1",
-    localPort: 5000
+    localPort: 5001
 });
 
 udpPort.open();

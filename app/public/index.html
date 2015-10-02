@@ -14,33 +14,18 @@
 
   <body>
 		<script type="text/javascript" src="./bower_components/highcharts/highcharts.js"></script>
-		<script type="text/javascript" src="js/modules/exporting.js"></script>
 		<img class="logo" src="images/divinediva-logo-flat.png" />		
     	
 		<div class="main-container">
-			<h1>WOMENATION Mind Training</h1>
-			<div>
-	        	<button type="button" class="muse-btn">Record</button>
-	        	<button type="button" class="muse-btn">Analyze</button>
-	        	<button type="button" class="muse-btn">Compare</button><br />
-	        	<p>Emotional valance:</p>
-	        	<button type="button" class="btn btn-default btn-sm">
-				  <span class="glyphicon glyphicon-plus-sign"></span> Positive
-				</button>
-	        	<button type="button" class="btn btn-default btn-sm">
-				  <span class="glyphicon glyphicon-adjust"></span> Neutral
-				</button>
-	        	<button type="button" class="btn btn-default btn-sm">
-				  <span class="glyphicon glyphicon-minus-sign"></span> Negative
-				</button>
-				<p>Raw EEG Data:</p>
-	     	</div>
 			<ol>
-				<li style="color: red;">Position 1: Left Ear(A1), Range: 0.0 - 1682.0 in microvolts </li>
-				<li style="color: #92278F;">Position 2: Left Forehead(FP1), Range: 0.0 - 1682.0 in microvolts </li>
-				<li style="color: #0071BB;">Position 3: Right Forehead(FP2), Range: 0.0 - 1682.0 in microvolts </li>
-				<li style="color: #00A651;">Position 4: Right Ear(A2), Range: 0.0 - 1682.0 in microvolts </li>
+				<!-- <li style="color: red;">Concentration</li> -->
+  			<li style="color: red;">Alpha</li>
+				<li style="color: #92278F;">Beta</li>
+				<li style="color: #0071BB;">Gamma</li>
+				<li style="color: #00A651;">Delta</li>
 			</ol>
+      Winning: <span id="winning"></span><br>
+      Losing: <span id="losing"></span>
 		</div>
 
   </body>
