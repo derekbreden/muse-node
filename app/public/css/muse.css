@@ -8,6 +8,12 @@ body{
 body.winning{
 	background: #AAFFAA;
 }
+body.winning-sortof{
+	background: #AAAAFF;
+}
+body.winning-not{
+	background: #AAAAAA;
+}
 body.losing{
 	background: #FFAAAA;
 }
