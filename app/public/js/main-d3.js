@@ -1,11 +1,11 @@
 $( function() {
   
-  var w = {};
+  window.w = {};
   
   w.locked = false;
   w.cache = {};
   
-w.a= function(b){
+window.w.a= function(rank){
 
   if(w.locked) return
   w.locked=true
@@ -13,32 +13,64 @@ w.a= function(b){
   w.c = setTimeout(function(){
     w.locked = false
     delete w.c
-  },500);
+  },1000);
+  
+  b = ''
+  $('#ranking').html(rank)
+  if(rank === 1){
+    b = 'F4'
+    w_s += 5
+    document.getElementById('winning').innerHTML = Math.round(w_s)
+    document.body.className = 'winning'
+    // T("sin", {freq:880, mul:0.5}).play();
+  }else if(rank === 2){
+    b = 'E4';
+    w_s += 1
+    document.getElementById('winning').innerHTML = Math.round(w_s)
+    document.body.className = 'winning-sortof'
+    // // T("sin", {freq:880, mul:0.5}).play();
+  }else if(rank === 3){
+    b = 'D4';
+    l_s += 1
+    document.getElementById('losing').innerHTML = Math.round(l_s)
+    document.body.className = 'winning-not'
+  }else if(rank === 4){
+    b = 'C4'
+    l_s += 5
+    document.getElementById('losing').innerHTML = Math.round(l_s)
+    document.body.className = 'losing'
+  }else{
+    b = 'B3'
+    l_s += 20
+    document.getElementById('losing').innerHTML = Math.round(l_s)
+    document.body.className = 'losing-big'
+  }
+  
   if(w.cache[b]){
     w.cache[b]()
     return
   }
   (function(){ 
-  var conductor = new BandJS();
+    var conductor = new BandJS();
 
-  conductor.setTimeSignature(4, 4);
-  conductor.setTempo(100);
-    var rightHand = conductor.createInstrument('square', 'oscillators');
-    var leftHand = conductor.createInstrument('triangle', 'oscillators');
-    var drum = conductor.createInstrument('white', 'noises');
-
+    conductor.setTimeSignature(4, 4);
+    conductor.setTempo(180);
+    var piano = conductor.createInstrument('triangle', 'oscillators');
+    // var rightHand = conductor.createInstrument('square', 'oscillators');
+    // var leftHand = conductor.createInstrument('triangle', 'oscillators');
+    // var drum = conductor.createInstrument('white', 'noises');
+    piano.note('eighth', b)
     // Bar 35
-    rightHand.note('quarter', b||'C5, E4')
-        .rest('quarter')
-        .rest('half');
+    // rightHand.note('quarter', b)
+    //     .rest('quarter')
+    //     .rest('half');
     var player = conductor.finish();
     w.cache[b] = function(){
       player.play();
-      player.stop();
     }
   })()
+  w.cache[b]()
 }
-window.w=w;
     var n = 240,
         random = d3.random.normal( 0, 0 );
 
@@ -140,9 +172,7 @@ window.w=w;
         l_s = 0
         w_s = 0
         last_change = new Date()
-        socket.on( "news", function(value) {
-            if(!(value.args))
-              return;
+        socket.on( "n", function(value) {
               
             // if(value.address == "/muse/elements/experimental/concentration"){
             //   add_point(value.args[0],0)
@@ -150,49 +180,22 @@ window.w=w;
             // if(value.address == "/muse/elements/experimental/mellow"){
             //   add_point(value.args[0],1)
             // }
-            if(value.address == "/muse/elements/alpha_relative"){
-              var avg = (value.args[0]+value.args[1]+value.args[2]+value.args[3]) / 4
-              add_point(avg,0)
-              if(avg > last[1] && avg > last[2] && avg > last[3]){
-                w.a('D4');
-                // w_s += (new Date() - last_change)/1000
-                // document.getElementById('winning').innerHTML = Math.round(w_s)
-                // document.body.className = 'winning'
-                // T("sin", {freq:880, mul:0.5}).play();
-              }else if(last[1] > avg && last[1] > last[2] && last[1] > last[3]){
-                w.a('B4');
-                // w_s += (new Date() - last_change)/1000
-                // document.getElementById('winning').innerHTML = Math.round(w_s)
-                // document.body.className = 'winning-sortof'
-                // // T("sin", {freq:880, mul:0.5}).play();
-              }else if(last[2] > avg && last[2] > last[1] && last[2] > last[3]){
-                w.a('C4');
-                // w_s += (new Date() - last_change)/1000
-                // document.getElementById('winning').innerHTML = Math.round(w_s)
-                // document.body.className = 'winning-not'
-              }else{
-                w.a('A4');
-                // l_s += (new Date() - last_change)/1000
-                // document.getElementById('losing').innerHTML = Math.round(l_s)
-                // document.body.className = 'losing'
-              }
-              // last_change = new Date()
+            if(value[0] === 0){
+              add_point(value[1],0)
+              var rank = [last[0],last[1],last[2],last[3]].sort().indexOf(value[1]);
+              w.a(5 - rank)
             }
-            if(value.address == "/muse/elements/beta_relative"){
-              var avg = (value.args[0]+value.args[1]+value.args[2]+value.args[3]) / 4
-              add_point(avg,1)
+            if(value[0] === 1){
+              add_point(value[1],1)
             }
-            if(value.address == "/muse/elements/gamma_relative"){
-              var avg = (value.args[0]+value.args[1]+value.args[2]+value.args[3]) / 4
-              add_point(avg,2)
+            if(value[0] === 2){
+              add_point(value[1],2)
             }
-            if(value.address == "/muse/elements/delta_relative"){
-              var avg = (value.args[0]+value.args[1]+value.args[2]+value.args[3]) / 4
-              add_point(avg,3)
+            if(value[0] === 3){
+              add_point(value[1],3)
             }
-            if(value.address == "/muse/elements/theta_relative"){
-              var avg = (value.args[0]+value.args[1]+value.args[2]+value.args[3]) / 4
-              add_point(avg,4)
+            if(value[0] === 4){
+              add_point(value[1],4)
             }
             // if(value.address == "/muse/elements/alpha_absolute"){
             //   var avg = (value.args[0]+value.args[1]+value.args[2]+value.args[3]) / 4

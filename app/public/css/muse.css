@@ -6,16 +6,19 @@ body{
 	-webkit-transition: background .2s linear;
 }
 body.winning{
-	background: #AAFFAA;
+	background: #FFFFFF;
 }
 body.winning-sortof{
-	background: #AAAAFF;
+	background: #CCCCCC;
 }
 body.winning-not{
 	background: #AAAAAA;
 }
 body.losing{
-	background: #FFAAAA;
+	background: #999999;
+}
+body.losing-big{
+	background: #444444;
 }
 
 .main-container{

@@ -34,12 +34,39 @@ io.on('connection', function (socket) {
 	}, 1000);
 */
   	// Listen for incoming OSC bundles.
+  var addresses = [
+      '/muse/elements/alpha_relative',
+      '/muse/elements/beta_relative',
+      '/muse/elements/gamma_relative',
+      '/muse/elements/delta_relative',
+      '/muse/elements/theta_relative'
+    ]
+var locked = []
+checkLock = function(b){
+  if(locked[b]){
+    return false;
+  }
+  locked[b] = true;
+  setTimeout(function(){
+    locked[b] = false;
+  }, 500);
+  return true;
+}
+var r = []
+avgMe = function(b,avg){
+  if(!r[b])
+    r[b] = [0,0,0,0,0,0,0,0,0,0]
+  r[b].push(avg)
+  r[b].shift()
+  return (r[b][0] + r[b][1] + r[b][2] + r[b][3] + r[b][4] + r[b][5] + r[b][6] + r[b][7] + r[b][8] + r[b][9]) / 5
+}
 	udpPort.on("message", function (oscData) {
-		now = Date.now()
-		if((now-lastPointTime <= 1000) || (lastPointTime-now <= 1000)) {
-			lastPointTime = now
-			socket.emit('news', oscData); 
-		}
+    var i = addresses.indexOf(oscData.address)
+    if (i !== -1) {
+      // if (checkLock(i)) {
+		    socket.emit('n', [i,avgMe(i,(oscData.args[0]+oscData.args[1]+oscData.args[2]+oscData.args[3])/4)]);
+      // }
+    }
 	});
 
 });
