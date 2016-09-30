@@ -4,94 +4,77 @@ $( function() {
   
   w.locked = false;
   w.cache = {};
-  
+  var last = []
+  var last_b = ''
+  setInterval(function(){
+      w.last_player.play()
+  }, 2000)
 window.w.a= function(rank){
 
-  if(w.locked) return
-  w.locked=true
-  if(w.c)clearTimeout(w.c)
-  w.c = setTimeout(function(){
-    w.locked = false
-    delete w.c
-  },1000);
   
   b = ''
-  $('#ranking').html(rank)
-  if(rank === 1){
-    b = 'F4'
-    w_s += 5
-    document.getElementById('winning').innerHTML = Math.round(w_s)
-    document.body.className = 'winning'
-    // T("sin", {freq:880, mul:0.5}).play();
-  }else if(rank === 2){
-    b = 'E4';
-    w_s += 1
-    document.getElementById('winning').innerHTML = Math.round(w_s)
-    document.body.className = 'winning-sortof'
-    // // T("sin", {freq:880, mul:0.5}).play();
-  }else if(rank === 3){
-    b = 'D4';
-    l_s += 1
-    document.getElementById('losing').innerHTML = Math.round(l_s)
-    document.body.className = 'winning-not'
-  }else if(rank === 4){
+//   if(rank === 1){
+//     b = 'F4'
+//     // w_s += 5
+//     // document.getElementById('winning').innerHTML = Math.round(w_s)
+//     // document.body.className = 'winning'
+//     // T("sin", {freq:880, mul:0.5}).play();
+//   }else if(rank === 2){
+//     b = 'E4';
+//     // w_s += 1
+//     // document.getElementById('winning').innerHTML = Math.round(w_s)
+//     // document.body.className = 'winning-sortof'
+//     // // T("sin", {freq:880, mul:0.5}).play();
+//   }else if(rank === 3){
+//     b = 'D4';
+//     // l_s += 1
+//     // document.getElementById('losing').innerHTML = Math.round(l_s)
+//     // document.body.className = 'winning-not'
+//   }else if(rank === 4){
+  if (rank === 1) {
     b = 'C4'
-    l_s += 5
-    document.getElementById('losing').innerHTML = Math.round(l_s)
-    document.body.className = 'losing'
+    if (last.length > 2) {
+        var temp = last.slice(0)
+        temp.shift()
+        var real = last[0] - temp.reduce(function(a,b){return a + b}) / temp.length
+        var int = Math.round(real * 10)
+        if (int > 1) b = 'D4'
+        if (int > 2) b = 'E4'
+        if (int > 3) b = 'F4'
+        if (int > 4) b = 'G4'
+    }
+    // l_s += 5
+    // document.getElementById('losing').innerHTML = Math.round(l_s)
+    // document.body.className = 'losing'
   }else{
     b = 'B3'
-    l_s += 20
-    document.getElementById('losing').innerHTML = Math.round(l_s)
-    document.body.className = 'losing-big'
+    // l_s += 20
+    // document.getElementById('losing').innerHTML = Math.round(l_s)
+    // document.body.className = 'losing-big'
   }
   
-  if(w.cache[b]){
-    w.cache[b]()
-    return
-  }
-  (function(){ 
-    var conductor = new BandJS();
-
-    conductor.setTimeSignature(4, 4);
-    conductor.setTempo(180);
-    var piano = conductor.createInstrument('triangle', 'oscillators');
-    // var rightHand = conductor.createInstrument('square', 'oscillators');
-    // var leftHand = conductor.createInstrument('triangle', 'oscillators');
-    // var drum = conductor.createInstrument('white', 'noises');
-    piano.note('eighth', b)
-    // Bar 35
-    // rightHand.note('quarter', b)
-    //     .rest('quarter')
-    //     .rest('half');
-    var player = conductor.finish();
-    w.cache[b] = function(){
-      player.play();
-    }
-  })()
-  w.cache[b]()
 }
-    var n = 240,
+    var n = 5,
         random = d3.random.normal( 0, 0 );
 
     function chart(domain, interpolation, tick) {
         var data = [d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random )];
 
         var margin = {
-                top: 10,
-                right: 0,
-                bottom: 6,
-                left: 80
+                top: -60,
+                right: 100,
+                bottom: 0,
+                left: 100
             },
-            width = window.innerWidth - 200,
-            height = window.innerHeight - 40;
+            width = window.innerWidth - 400,
+            height = window.innerHeight - 100;
 
         var x = d3.scale.linear()
             .domain( domain )
             .range( [0, width] );
 
         var y = d3.scale.linear()
-            .domain( [0, .75] )
+            .domain( [0, .7] )
             .range( [height, 0] );
 
         var line = d3.svg.line()
@@ -123,17 +106,8 @@ window.w.a= function(rank){
             .attr( "width", width )
             .attr( "height", height );
 
-        svg.append( "g" )
-            .attr( "class", "y axis" )
-            .call( d3.svg.axis().scale( y ).ticks( 5 ).orient( "left" ) )
-            .append( "text" )
-            .attr( "transform", "rotate(-90)" )
-            .attr( "y", 6 )
-            .attr( "dy", ".71em" )
-            .style( "text-anchor", "end" )
-            .text( "" );
 
-        var colors = ["#00cc00", "#0000cc", "#000000", "#cc0000", "#CCCC00"];
+        var colors = ["#33cc33", "#993366", "#996633", "#663399", "#336699"];
 
         var path = aLineContainer
             .attr( "clip-path", "url(#clip)" )
@@ -143,7 +117,10 @@ window.w.a= function(rank){
             .style( "stroke", function(d, i) {
                 return colors[i];
             } )
-            .attr( "d", line );
+            .style( "stroke-width", 30)
+            .style( "stroke-opacity", function(d, i){return i == 0 ? .5 : .5 })
+            .attr( "d", line )
+        
 
         // tick(path, line, data, x);
         
@@ -155,24 +132,24 @@ window.w.a= function(rank){
                       path
                           .attr( "d", line )
                           .attr( "transform", null )
-                          .transition()
-                          .duration( 750 )
-                          .ease( "linear" )
-                          .attr( "transform", "translate(" + x( 0 ) + ")" );
           
                       // pop the old data point off the front
                       data[where].shift();
-                    last[where] = what
         }
                     
         var socket = io.connect( "http://localhost:3000" );
-        var last = [0,0,0,0]
         losing = true
         winning = false
         l_s = 0
         w_s = 0
         last_change = new Date()
+        socket.on("m", function(value) {
+
+                $('#r-'+value[0])
+                    .html(value[1] < 4 ? ' :)': (value[1] > 7 ? ' :(' : ' :|'))
+        })
         socket.on( "n", function(value) {
+
               
             // if(value.address == "/muse/elements/experimental/concentration"){
             //   add_point(value.args[0],0)
@@ -180,23 +157,62 @@ window.w.a= function(rank){
             // if(value.address == "/muse/elements/experimental/mellow"){
             //   add_point(value.args[0],1)
             // }
-            if(value[0] === 0){
-              add_point(value[1],0)
-              var rank = [last[0],last[1],last[2],last[3]].sort().indexOf(value[1]);
-              w.a(5 - rank)
-            }
-            if(value[0] === 1){
-              add_point(value[1],1)
-            }
-            if(value[0] === 2){
-              add_point(value[1],2)
-            }
-            if(value[0] === 3){
-              add_point(value[1],3)
-            }
-            if(value[0] === 4){
-              add_point(value[1],4)
-            }
+            add_point(value[1]>.4?.4:(value[1]<.10?.10:value[1]),value[0])
+            last[value[0]] = value[1]
+            // console.log(all, last, rank)
+            w.a(last.map(function(){return arguments[0]}).sort(function(a,b){return b - a}).indexOf(last[0]) + 1)
+
+
+            var nums = [18, 28, 36, 56, 96]
+            last.forEach(function(thing,i){
+                var rank = last.map(function(){return arguments[0]}).sort(function(a,b){return b - a}).indexOf(last[i])
+                $('#r-'+i)
+                    // .html(rank + 1)
+                .parent()
+                    .css({
+                        'font-size': nums[4 - rank],
+                        'line-height': nums[4 - rank] + 'px',
+                        'height': nums[4 - rank] + 'px'
+                    })
+               if (rank === 0){
+
+  
+                 var b = ['G4','E4','C4','B3','A3'][i]
+  if(w.cache[b]){
+    w.cache[b]()
+    return
+  }
+  (function(){ 
+    var conductor = new BandJS();
+
+    conductor.setTimeSignature(4, 4);
+    conductor.setTempo(120);
+    var piano = conductor.createInstrument('sine', 'oscillators');
+    // var rightHand = conductor.createInstrument('square', 'oscillators');
+    // var leftHand = conductor.createInstrument('triangle', 'oscillators');
+    // var drum = conductor.createInstrument('white', 'noises');
+    piano.setVolume(10)
+    piano.note('eighth', b)
+    // Bar 35
+    // rightHand.note('quarter', b)
+    //     .rest('quarter')
+    //     .rest('half');
+    var player = conductor.finish();
+    w.cache[b] = function(){
+      if (b !== last_b){
+        if (w.last_player) {
+            w.last_player.pause()
+        }
+        player.play()
+        w.last_player = player
+        last_b = b
+      }
+    }
+  })()
+  w.cache[b]()
+               }
+            })
+
             // if(value.address == "/muse/elements/alpha_absolute"){
             //   var avg = (value.args[0]+value.args[1]+value.args[2]+value.args[3]) / 4
             //   // add_point((avg - last.theta + 1)/2,1)
@@ -218,7 +234,7 @@ window.w.a= function(rank){
         } );
     }
 
-    chart( [1, n - 2], "basis", function tick(path, line, data, x) {} );
+    chart( [1, n - 2], "none", function tick(path, line, data, x) {} );
 
 } );
 

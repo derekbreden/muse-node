@@ -14,14 +14,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded())
 app.use(express.static(__dirname + '/public'));
 
-var udpPort = new osc.UDPPort({
-    localAddress: "127.0.0.1",
-    localPort: 5001
-});
-
-udpPort.open();
-
 io.on('connection', function (socket) {
+
+  var udpPort = new osc.UDPPort({
+      localAddress: "127.0.0.1",
+      localPort: 5000
+  });
+
+  udpPort.open();
     console.log("socket.io connection");
   	socket.emit('news', { hello: 'world' });  
 /*
@@ -36,38 +36,51 @@ io.on('connection', function (socket) {
   	// Listen for incoming OSC bundles.
   var addresses = [
       '/muse/elements/alpha_relative',
+      '/muse/elements/theta_relative',
       '/muse/elements/beta_relative',
-      '/muse/elements/gamma_relative',
       '/muse/elements/delta_relative',
-      '/muse/elements/theta_relative'
+      '/muse/elements/gamma_relative',
     ]
 var locked = []
-checkLock = function(b){
+var checkLock = function(b){
   if(locked[b]){
     return false;
   }
   locked[b] = true;
   setTimeout(function(){
     locked[b] = false;
-  }, 500);
+  }, 30);
   return true;
 }
 var r = []
-avgMe = function(b,avg){
+var avgMe = function(b,avg){
   if(!r[b])
-    r[b] = [0,0,0,0,0,0,0,0,0,0]
-  r[b].push(avg)
-  r[b].shift()
-  return (r[b][0] + r[b][1] + r[b][2] + r[b][3] + r[b][4] + r[b][5] + r[b][6] + r[b][7] + r[b][8] + r[b][9]) / 5
+    r[b] = [
+      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    ]
+  r[b].unshift(avg)
+  r[b].pop()
+  return r[b].reduce(function(prev, cur){ return (prev || 0) + cur }) / r[b].length
 }
-	udpPort.on("message", function (oscData) {
+  var udpBind = function (oscData) {
     var i = addresses.indexOf(oscData.address)
     if (i !== -1) {
       // if (checkLock(i)) {
 		    socket.emit('n', [i,avgMe(i,(oscData.args[0]+oscData.args[1]+oscData.args[2]+oscData.args[3])/4)]);
+        socket.emit('m', [i,Math.round(50*arr.meanAbsoluteDeviation([
+          oscData.args[0],
+          oscData.args[1],
+          oscData.args[2],
+          oscData.args[3]
+        ]))])
       // }
     }
-	});
+	}
+	udpPort.on("message", udpBind);
+  socket.on('disconnect', function(){
+    udpPort.close()
+  })
 
 });
 
@@ -75,3 +88,90 @@ var port = Number(process.env.PORT || 3000);
 server.listen(port, function() {
   console.log("Listening on " + port);
 });
+
+var arr = {	
+	max: function(array) {
+		return Math.max.apply(null, array);
+	},
+	
+	min: function(array) {
+		return Math.min.apply(null, array);
+	},
+	
+	range: function(array) {
+		return arr.max(array) - arr.min(array);
+	},
+	
+	midrange: function(array) {
+		return arr.range(array) / 2;
+	},
+
+	sum: function(array) {
+		var num = 0;
+		for (var i = 0, l = array.length; i < l; i++) num += array[i];
+		return num;
+	},
+	
+	mean: function(array) {
+		return arr.sum(array) / array.length;
+	},
+	
+	median: function(array) {
+		array.sort(function(a, b) {
+			return a - b;
+		});
+		var mid = array.length / 2;
+		return mid % 1 ? array[mid - 0.5] : (array[mid - 1] + array[mid]) / 2;
+	},
+	
+	modes: function(array) {
+		if (!array.length) return [];
+		var modeMap = {},
+			maxCount = 1,
+			modes = [array[0]];
+
+		array.forEach(function(val) {
+			if (!modeMap[val]) modeMap[val] = 1;
+			else modeMap[val]++;
+
+			if (modeMap[val] > maxCount) {
+				modes = [val];
+				maxCount = modeMap[val];
+			}
+			else if (modeMap[val] === maxCount) {
+				modes.push(val);
+				maxCount = modeMap[val];
+			}
+		});
+		return modes;
+	},
+	
+	variance: function(array) {
+		var mean = arr.mean(array);
+		return arr.mean(array.map(function(num) {
+			return Math.pow(num - mean, 2);
+		}));
+	},
+	
+	standardDeviation: function(array) {
+		return Math.sqrt(arr.variance(array));
+	},
+	
+	meanAbsoluteDeviation: function(array) {
+		var mean = arr.mean(array);
+		return arr.mean(array.map(function(num) {
+			return Math.abs(num - mean);
+		}));
+	},
+	
+	zScores: function(array) {
+		var mean = arr.mean(array);
+		var standardDeviation = arr.standardDeviation(array);
+		return array.map(function(num) {
+			return (num - mean) / standardDeviation;
+		});
+	}
+};
+
+// Function aliases:
+arr.average = arr.mean;

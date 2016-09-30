@@ -1,24 +1,10 @@
+* {cursor: none;}
 body, p, h1, h2 {
 	font-family: 'Quicksand', sans-serif;
 }
 body{
 	overflow: hidden;
-	-webkit-transition: background .2s linear;
-}
-body.winning{
-	background: #FFFFFF;
-}
-body.winning-sortof{
-	background: #CCCCCC;
-}
-body.winning-not{
-	background: #AAAAAA;
-}
-body.losing{
-	background: #999999;
-}
-body.losing-big{
-	background: #444444;
+    background: #000 !important;
 }
 
 .main-container{
