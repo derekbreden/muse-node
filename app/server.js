@@ -18,7 +18,7 @@ io.on('connection', function (socket) {
 
   var udpPort = new osc.UDPPort({
       localAddress: "127.0.0.1",
-      localPort: 5000
+      localPort: 5001
   });
 
   udpPort.open();
@@ -56,8 +56,7 @@ var r = []
 var avgMe = function(b,avg){
   if(!r[b])
     r[b] = [
-      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
     ]
   r[b].unshift(avg)
   r[b].pop()
@@ -67,13 +66,14 @@ var avgMe = function(b,avg){
     var i = addresses.indexOf(oscData.address)
     if (i !== -1) {
       // if (checkLock(i)) {
-		    socket.emit('n', [i,avgMe(i,(oscData.args[0]+oscData.args[1]+oscData.args[2]+oscData.args[3])/4)]);
-        socket.emit('m', [i,Math.round(50*arr.meanAbsoluteDeviation([
-          oscData.args[0],
-          oscData.args[1],
-          oscData.args[2],
-          oscData.args[3]
-        ]))])
+		    socket.emit('l', [i,avgMe(i,(oscData.args[0]+oscData.args[1])/2)]);
+		    socket.emit('r', [i,avgMe(i+10,(oscData.args[2]+oscData.args[3])/2)]);
+        // socket.emit('m', [i,Math.round(50*arr.meanAbsoluteDeviation([
+        //   oscData.args[0],
+        //   oscData.args[1],
+        //   oscData.args[2],
+        //   oscData.args[3]
+        // ]))])
       // }
     }
 	}
