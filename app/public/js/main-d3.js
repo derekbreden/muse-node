@@ -1,6 +1,7 @@
 $( function() {
 
     var play_b = function(b, lp) {
+      if (!b) return
         if(w.cache[b]){
     w.cache[b]()
     return
@@ -14,7 +15,7 @@ $( function() {
     // var rightHand = conductor.createInstrument('square', 'oscillators');
     // var leftHand = conductor.createInstrument('triangle', 'oscillators');
     // var drum = conductor.createInstrument('white', 'noises');
-    piano.setVolume(5)
+    piano.setVolume(100)
     piano.note('eighth', b)
     // Bar 35
     // rightHand.note('quarter', b)
@@ -37,9 +38,82 @@ $( function() {
     setTimeout(function(){
         play_b(w.r)
     }, 400)
-  }, 4000)
+  }, 2000)
     var n = 5,
         random = d3.random.normal( 0, 0 );
+        
+                    
+    var socket = io.connect( "http://localhost:3000" );
+    
+    
+    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+    //
+    //
+    //
+    //
+    var addresses = [
+        '/muse/elements/alpha_relative',
+        '/muse/elements/theta_relative',
+        '/muse/elements/beta_relative',
+        '/muse/elements/delta_relative',
+        '/muse/elements/gamma_relative',
+      ]
+    var colors = [
+      "#33cc33",
+      "#993366",
+      "#996633",
+      "#663399",
+      "#336699"];
+    var notes = [
+      // Alpha 0
+          'A4', // YEA RELAXED!
+      // Theta 1
+          'A2', // MEH
+      // Beta 2
+          'A5', // YEA FOCUSED!
+      // Delta 3
+          false, // NORMAL (shrug)
+      // Gamma 4
+          'A3', // MEH
+     ]
+     var sizes = [12, 18, 24, 48, 72]
+     var labels = [
+       'Alpha',
+       'Theta',
+       'Beta',
+       'Delta',
+       'Gamma'
+     ]
+     var average_over = 10
+     //
+     //
+     //
+     //
+     // -------------------------------------------------------------------------
+     // -------------------------------------------------------------------------
+  
+    socket.emit('s', [addresses, average_over])
+    socket.on('b', function(value){
+      $('#battery').html( ''
+        + value + '%'
+        + '<div class="battery"><div class="level"></div></div>'
+      )
+      $('.battery .level').width(value + '%')
+      if (value < 20) {
+        $('.battery .level').css({
+          background: '#993333'
+        })
+      } else if ( value < 40) {
+        $('.battery .level').css({
+          background: '#996633'
+        })
+      } else {
+        $('.battery .level').css({
+          background: '#333'
+        })
+      }
+    })
 
     function chart(domain, interpolation, tick, lorr) {
         var data = [d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random )];
@@ -95,9 +169,6 @@ $( function() {
             .attr( "width", width )
             .attr( "height", height );
 
-
-        var colors = ["#33cc33", "#993366", "#996633", "#663399", "#336699"];
-
         var path = aLineContainer
             .attr( "clip-path", "url(#clip)" )
             .append( "path" )
@@ -107,7 +178,7 @@ $( function() {
                 return colors[i];
             } )
             .style( "stroke-width", 30)
-            .style( "stroke-opacity", function(d, i){return i == 0 ? .5 : .5 })
+            .style( "stroke-opacity", .5)
             .attr( "d", line )
         
 
@@ -125,8 +196,6 @@ $( function() {
                       // pop the old data point off the front
                       data[where].shift();
         }
-                    
-        var socket = io.connect( "http://localhost:3000" );
         socket.on( lorr, function(value) {
 
               
@@ -143,17 +212,18 @@ $( function() {
             w.last[lorr][value[0]] = value[1]
 
 
-            var nums = [18, 28, 36, 56, 96]
+            
             w.last[lorr].forEach(function(thing,i){
                 var rank = w.last[lorr].map(function(){return arguments[0]}).sort(function(a,b){return b - a}).indexOf(w.last[lorr][i])
                 $('#'+lorr+'-'+i)
-                    // .html(rank + 1)
+                  .html(labels[i])
                 .parent()
-                    .css({
-                        'font-size': nums[4 - rank],
-                        'line-height': nums[4 - rank] + 'px',
-                        'height': nums[4 - rank] + 'px'
-                    })
+                  .css({
+                      'font-size': sizes[4 - rank],
+                      'line-height': sizes[4 - rank] + 'px',
+                      'height': sizes[4 - rank] + 'px',
+                      'background': colors[i]
+                  })
                if (rank === 0){
 
                  // 3 1 0 2 4
@@ -163,18 +233,7 @@ $( function() {
                  // Alpha 0
                  // Beta 2
                  // Gamma 4
-                 var b = [
-                 // Alpha 0
-                     'A4', // YEA RELAXED!
-                 // Theta 1
-                     'A2', // MEH
-                 // Beta 2
-                     'A5', // YEA FOCUSED!
-                 // Delta 3
-                     'A3', // NORMAL (shrug)
-                 // Gamma 4
-                     'A1', // MEH
-                ][i];
+                 var b = notes[i];
                  w[lorr] = b
 
 

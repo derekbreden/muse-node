@@ -16,70 +16,59 @@ app.use(express.static(__dirname + '/public'));
 
 io.on('connection', function (socket) {
 
-  var udpPort = new osc.UDPPort({
-      localAddress: "127.0.0.1",
-      localPort: 5001
-  });
+  socket.on('s', function(value){
+    var addresses = value[0]
+    var average_over = value[1]
+    
+    var udpPort = new osc.UDPPort({
+        localAddress: "127.0.0.1",
+        localPort: 5001
+    });
 
-  udpPort.open();
-    console.log("socket.io connection");
-  	socket.emit('news', { hello: 'world' });  
-/*
-	setInterval(function(){
-		var testData = {
-			address: "/muse/eeg",
-			args: [100, 200, 300, 400]
-		}
-		socket.emit('news', testData); 
-	}, 1000);
-*/
-  	// Listen for incoming OSC bundles.
-  var addresses = [
-      '/muse/elements/alpha_relative',
-      '/muse/elements/theta_relative',
-      '/muse/elements/beta_relative',
-      '/muse/elements/delta_relative',
-      '/muse/elements/gamma_relative',
-    ]
-var locked = []
-var checkLock = function(b){
-  if(locked[b]){
-    return false;
-  }
-  locked[b] = true;
-  setTimeout(function(){
-    locked[b] = false;
-  }, 30);
-  return true;
-}
-var r = []
-var avgMe = function(b,avg){
-  if(!r[b])
-    r[b] = [
-      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-    ]
-  r[b].unshift(avg)
-  r[b].pop()
-  return r[b].reduce(function(prev, cur){ return (prev || 0) + cur }) / r[b].length
-}
-  var udpBind = function (oscData) {
-    var i = addresses.indexOf(oscData.address)
-    if (i !== -1) {
-      // if (checkLock(i)) {
-		    socket.emit('l', [i,avgMe(i,(oscData.args[0]+oscData.args[1])/2)]);
-		    socket.emit('r', [i,avgMe(i+10,(oscData.args[2]+oscData.args[3])/2)]);
-        // socket.emit('m', [i,Math.round(50*arr.meanAbsoluteDeviation([
-        //   oscData.args[0],
-        //   oscData.args[1],
-        //   oscData.args[2],
-        //   oscData.args[3]
-        // ]))])
-      // }
+    udpPort.open();
+      console.log("socket.io connection");
+    	socket.emit('news', { hello: 'world' });
+  var locked = []
+  var checkLock = function(b){
+    if(locked[b]){
+      return false;
     }
-	}
-	udpPort.on("message", udpBind);
-  socket.on('disconnect', function(){
-    udpPort.close()
+    locked[b] = true;
+    setTimeout(function(){
+      locked[b] = false;
+    }, 30);
+    return true;
+  }
+  var r = []
+  var avgMe = function(b,avg){
+    if(!r[b])
+      r[b] = new Array(average_over).fill(0)
+    r[b].unshift(avg)
+    r[b].pop()
+    return r[b].reduce(function(prev, cur){ return (prev || 0) + cur }) / r[b].length
+  }
+    var udpBind = function (oscData) {
+      var i = addresses.indexOf(oscData.address)
+      if (i !== -1) {
+        // if (checkLock(i)) {
+  		    socket.emit('l', [i,avgMe(i,(oscData.args[0]+oscData.args[1])/2)]);
+  		    socket.emit('r', [i,avgMe(i+10,(oscData.args[2]+oscData.args[3])/2)]);
+          // socket.emit('m', [i,Math.round(50*arr.meanAbsoluteDeviation([
+          //   oscData.args[0],
+          //   oscData.args[1],
+          //   oscData.args[2],
+          //   oscData.args[3]
+          // ]))])
+        // }
+      }
+      if (oscData.address === '/muse/config') {
+        socket.emit('b', JSON.parse(oscData.args[0]).battery_percent_remaining)
+      }
+  	}
+  	udpPort.on("message", udpBind);
+    socket.on('disconnect', function(){
+      udpPort.close()
+    })
   })
 
 });
