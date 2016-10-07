@@ -1,44 +1,50 @@
 $( function() {
 
-    var play_b = function(b, lp) {
+    var play_b = function(b, lorr) {
+        var key = b + lorr
+        console.log(key)
       if (!b) return
-        if(w.cache[b]){
-    w.cache[b]()
-    return
-  }
-  (function(){ 
-    var conductor = new BandJS();
+        if(w.cache[key]){
+            w.cache[key]()
+            return
+        }
+        (function(lorr){ 
+            var conductor = new BandJS();
 
-    conductor.setTimeSignature(4, 4);
-    conductor.setTempo(140);
-    var piano = conductor.createInstrument('sine', 'oscillators');
-    // var rightHand = conductor.createInstrument('square', 'oscillators');
-    // var leftHand = conductor.createInstrument('triangle', 'oscillators');
-    // var drum = conductor.createInstrument('white', 'noises');
-    piano.setVolume(10)
-    piano.note('eighth', b)
-    // Bar 35
-    // rightHand.note('quarter', b)
-    //     .rest('quarter')
-    //     .rest('half');
-    var player = conductor.finish();
-    w.cache[b] = function(){
-        player.play();
-    }
-  })()
-  w.cache[b]()
+            conductor.setTimeSignature(4, 4);
+            console.log(lorr)
+            conductor.setTempo(100)//lorr==='l'?160:100);
+            var piano = conductor.createInstrument('sine', 'oscillators');
+            // var rightHand = conductor.createInstrument('square', 'oscillators');
+            // var leftHand = conductor.createInstrument('triangle', 'oscillators');
+            // var drum = conductor.createInstrument('white', 'noises');
+            piano.setVolume(10)
+            piano.note(lorr==='l'?'sixteenth':'quarter', b)
+            // Bar 35
+            // rightHand.note('quarter', b)
+            //     .rest('quarter')
+            //     .rest('half');
+            var player = conductor.finish();
+            w.cache[key] = function(){
+                player.play();
+            }
+        })(lorr)
+        w.cache[key]()
     }
   
   window.w = {};
   
+  w.lastUpdated = new Date()
   w.locked = false;
   w.cache = {};
   setInterval(function(){
-    play_b(w.l)
+    if (new Date() - 1000 > w.lastUpdated)
+        return
+    play_b(w.r, 'r')
     setTimeout(function(){
-        play_b(w.r)
-    }, 400)
-  }, 2000)
+        play_b(w.l, 'l')
+    }, 500)
+  }, 3000)
     var n = 5,
         random = d3.random.normal( 0, 0 );
         
@@ -53,39 +59,52 @@ $( function() {
     //
     //
     var addresses = [
-        '/muse/elements/alpha_relative',
+        // '/muse/elements/alpha_relative',
         '/muse/elements/theta_relative',
         '/muse/elements/beta_relative',
         // '/muse/elements/delta_relative',
         '/muse/elements/gamma_relative',
       ]
     var colors = [
-      "#33cc33",
+    //   "#33cc33",
       "#993366",
       "#996633",
     //   "#663399",
       "#336699"];
     var notes = [
       // Alpha 0
-          'A3', // YEA RELAXED!
+        //   'A3', // YEA RELAXED!
+    //   // Theta 1
+    // //       'A2', // MEH
+    //   // Theta 1
+    //       'A3', // MEH
       // Theta 1
-          'A2', // MEH
+          false, // MEH
       // Beta 2
-          'A5', // YEA FOCUSED!
+          'A4', // YEA FOCUSED!
       // Delta 3
         //   false, // NORMAL (shrug)
+    //   // Gamma 4
+    //       'A1', // MEH
       // Gamma 4
-          'A1', // MEH
+          'A5', // MEH
      ]
      var sizes = [12, 18, 24, 48, 72]
      var labels = [
-       'Alpha',
+    //    'Alpha',
        'Theta',
        'Beta',
     //    'Delta',
        'Gamma'
      ]
-     var average_over = 20
+     var phrases = [
+    //   'relaxed',
+      'sleepy',
+      'focused externally',
+      //  'ADHD',
+      'gamma'
+    ]
+     var average_over = 40
      //
      //
      //
@@ -235,19 +254,14 @@ $( function() {
                  // Gamma 4
                  var b = notes[i];
                  w[lorr] = b
+                 if (thing > .1)
+                    w.lastUpdated = new Date()
 
 
 
 
 
 
-                 var phrases = [
-                         'relaxed',
-                         'sleepy',
-                         'focused externally',
-                        //  'ADHD',
-                         'gamma'
-                     ]
                  if (lorr == 'l'){
                     w.last_l = i
                  } else {
