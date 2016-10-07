@@ -22,7 +22,7 @@ io.on('connection', function (socket) {
     
     var udpPort = new osc.UDPPort({
         localAddress: "127.0.0.1",
-        localPort: 5001
+        localPort: 5000
     });
 
     udpPort.open();

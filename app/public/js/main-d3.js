@@ -15,7 +15,7 @@ $( function() {
     // var rightHand = conductor.createInstrument('square', 'oscillators');
     // var leftHand = conductor.createInstrument('triangle', 'oscillators');
     // var drum = conductor.createInstrument('white', 'noises');
-    piano.setVolume(100)
+    piano.setVolume(10)
     piano.note('eighth', b)
     // Bar 35
     // rightHand.note('quarter', b)
@@ -56,36 +56,36 @@ $( function() {
         '/muse/elements/alpha_relative',
         '/muse/elements/theta_relative',
         '/muse/elements/beta_relative',
-        '/muse/elements/delta_relative',
+        // '/muse/elements/delta_relative',
         '/muse/elements/gamma_relative',
       ]
     var colors = [
       "#33cc33",
       "#993366",
       "#996633",
-      "#663399",
+    //   "#663399",
       "#336699"];
     var notes = [
       // Alpha 0
-          'A4', // YEA RELAXED!
+          'A3', // YEA RELAXED!
       // Theta 1
           'A2', // MEH
       // Beta 2
           'A5', // YEA FOCUSED!
       // Delta 3
-          false, // NORMAL (shrug)
+        //   false, // NORMAL (shrug)
       // Gamma 4
-          'A3', // MEH
+          'A1', // MEH
      ]
      var sizes = [12, 18, 24, 48, 72]
      var labels = [
        'Alpha',
        'Theta',
        'Beta',
-       'Delta',
+    //    'Delta',
        'Gamma'
      ]
-     var average_over = 10
+     var average_over = 20
      //
      //
      //
@@ -151,7 +151,7 @@ $( function() {
             .style( "margin-top", margin.top + "px" )
             .style({
                 position: 'absolute',
-                left: 0 + (lorr==='r'?window.innerWidth/2:0),
+                left: 0 + (lorr==='l'?window.innerWidth/2:0),
                 top: 0
             })
             .append( "g" )
@@ -243,10 +243,10 @@ $( function() {
 
                  var phrases = [
                          'relaxed',
-                         'tripping balls',
+                         'sleepy',
                          'focused externally',
-                         'ADHD',
-                         'stressing big time'
+                        //  'ADHD',
+                         'gamma'
                      ]
                  if (lorr == 'l'){
                     w.last_l = i
@@ -258,8 +258,8 @@ $( function() {
                         '<div>You are ' + phrases[w.last_l] + '.</div>')
                  } else {
                     $('#ur').html(
-                        '<div style="width:50%;">Your left brain is ' + phrases[w.last_l] + '.</div>'
-                        + '<div style="width:50%;">Your right brain is ' + phrases[w.last_r] + '.</div>'
+                        '<div style="width:50%;">Your left side is ' + phrases[w.last_r] + '.</div>'
+                        + '<div style="width:50%;">Your right side is ' + phrases[w.last_l] + '.</div>'
                     )
                  }
                  
