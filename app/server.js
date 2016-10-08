@@ -26,8 +26,6 @@ io.on('connection', function (socket) {
     });
 
     udpPort.open();
-      console.log("socket.io connection");
-    	socket.emit('news', { hello: 'world' });
   var locked = []
   var checkLock = function(b){
     if(locked[b]){

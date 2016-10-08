@@ -1,35 +1,35 @@
 $( function() {
 
-    var play_b = function(b, lorr) {
-        var key = b + lorr
-        console.log(key)
-      if (!b) return
-        if(w.cache[key]){
-            w.cache[key]()
-            return
-        }
-        (function(lorr){ 
+    var play_b = function(notes_to_play) {
+        (function(){ 
             var conductor = new BandJS();
 
             conductor.setTimeSignature(4, 4);
-            console.log(lorr)
             conductor.setTempo(100)//lorr==='l'?160:100);
             var piano = conductor.createInstrument('sine', 'oscillators');
+            // var piano2 = conductor.createInstrument('sine', 'oscillators');
+            // var piano3 = conductor.createInstrument('sine', 'oscillators');
             // var rightHand = conductor.createInstrument('square', 'oscillators');
             // var leftHand = conductor.createInstrument('triangle', 'oscillators');
             // var drum = conductor.createInstrument('white', 'noises');
-            piano.setVolume(10)
-            piano.note(lorr==='l'?'sixteenth':'quarter', b)
+            piano.rest('sixteenth')
+            piano.setVolume(notes_to_play[0][1])
+            piano.note('eighth', notes_to_play[0][0])
+            piano.setVolume(notes_to_play[1][1])
+            piano.note('sixteenth', notes_to_play[1][0])
+            piano.setVolume(notes_to_play[2][1])
+            piano.note('sixteenth', notes_to_play[2][0])
+            piano.rest('sixteenth')
             // Bar 35
             // rightHand.note('quarter', b)
             //     .rest('quarter')
             //     .rest('half');
             var player = conductor.finish();
-            w.cache[key] = function(){
-                player.play();
-            }
-        })(lorr)
-        w.cache[key]()
+            player.play()
+            conductor.setOnFinishedCallback(function(){
+              conductor.audioContext.close();
+            })
+        })()
     }
   
   window.w = {};
@@ -40,11 +40,41 @@ $( function() {
   setInterval(function(){
     if (new Date() - 1000 > w.lastUpdated)
         return
-    play_b(w.r, 'r')
+    
+    
+    var notes_to_play = []
+    w.last.r.forEach(function(val, i){
+      var rank = w.last.r.map(function(){return arguments[0]}).sort(function(a,b){return b - a}).indexOf(w.last.r[i])
+      // setTimeout(function(){
+        // console.log('r', labels[i],notes[i],Math.floor(val * 100))
+      notes_to_play[rank] = [notes[i], Math.floor(val * 100)]
+        // play_b(notes[i], Math.floor(val * 100))
+      // }, rank * 300)
+    })
+    play_b(notes_to_play)
+    
     setTimeout(function(){
-        play_b(w.l, 'l')
-    }, 500)
-  }, 3000)
+      var notes_to_play = []
+      w.last.l.forEach(function(val, i){
+        var rank = w.last.l.map(function(){return arguments[0]}).sort(function(a,b){return b - a}).indexOf(w.last.l[i])
+        notes_to_play[rank] = [notes[i], Math.floor(val * 100)]
+        // setTimeout(function(){
+        //   console.log('l', labels[i],notes[i],Math.floor(val * 100))
+        //   play_b(notes[i], Math.floor(val * 100))
+        // }, rank * 300)
+      })
+      play_b(notes_to_play)
+    }, 1000)
+    
+    
+    return
+        
+        
+    play_b(w.r, 'r', 100)
+    setTimeout(function(){
+        play_b(w.l, 'l', 100)
+    }, 300)
+  }, 4000)
     var n = 5,
         random = d3.random.normal( 0, 0 );
         
@@ -59,52 +89,42 @@ $( function() {
     //
     //
     var addresses = [
-        // '/muse/elements/alpha_relative',
+        '/muse/elements/alpha_relative',
         '/muse/elements/theta_relative',
         '/muse/elements/beta_relative',
         // '/muse/elements/delta_relative',
-        '/muse/elements/gamma_relative',
+        // '/muse/elements/gamma_relative',
       ]
     var colors = [
-    //   "#33cc33",
+      "#33cc33",
       "#993366",
       "#996633",
-    //   "#663399",
-      "#336699"];
+      // "#663399",
+      // "#336699"
+    ]
     var notes = [
-      // Alpha 0
-        //   'A3', // YEA RELAXED!
-    //   // Theta 1
-    // //       'A2', // MEH
-    //   // Theta 1
-    //       'A3', // MEH
-      // Theta 1
-          false, // MEH
-      // Beta 2
-          'A4', // YEA FOCUSED!
-      // Delta 3
-        //   false, // NORMAL (shrug)
-    //   // Gamma 4
-    //       'A1', // MEH
-      // Gamma 4
-          'A5', // MEH
+      'A4',
+      'A3',
+      'A5',
+      // false,
+      // false,
      ]
      var sizes = [12, 18, 24, 48, 72]
      var labels = [
-    //    'Alpha',
+       'Alpha',
        'Theta',
        'Beta',
-    //    'Delta',
-       'Gamma'
+      //  'Delta',
+      //  'Gamma'
      ]
      var phrases = [
-    //   'relaxed',
-      'sleepy',
-      'focused externally',
-      //  'ADHD',
-      'gamma'
+      'Relaxed',
+      'Tired',
+      'Focus',
+      // 'ADHD',
+      // 'Stress'
     ]
-     var average_over = 40
+     var average_over = 200
      //
      //
      //
@@ -121,20 +141,20 @@ $( function() {
       $('.battery .level').width(value + '%')
       if (value < 20) {
         $('.battery .level').css({
-          background: '#993333'
+          background: '#E66'
         })
       } else if ( value < 40) {
         $('.battery .level').css({
-          background: '#996633'
+          background: '#EA6'
         })
       } else {
         $('.battery .level').css({
-          background: '#333'
+          background: '#EEE'
         })
       }
     })
 
-    function chart(domain, interpolation, tick, lorr) {
+    function chart(lorr) {
         var data = [d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random )];
 
         var margin = {
@@ -143,19 +163,19 @@ $( function() {
                 bottom: 0,
                 left: 25
             },
-            width = window.innerWidth / 2 - 100 ,
+            width = window.innerWidth / 2 - 100,
             height = window.innerHeight - 100;
 
         var x = d3.scale.linear()
-            .domain( domain )
+            .domain( [0, 4] )
             .range( [0, width] );
 
         var y = d3.scale.linear()
-            .domain( [0, .7] )
+            .domain( [0, 1] )
             .range( [height, 0] );
 
         var line = d3.svg.line()
-            .interpolate( interpolation )
+            .interpolate( "none" )
             .x( function(d, i) {
                 return x( i );
             } )
@@ -197,7 +217,7 @@ $( function() {
                 return colors[i];
             } )
             .style( "stroke-width", 30)
-            .style( "stroke-opacity", .5)
+            // .style( "stroke-opacity", .5)
             .attr( "d", line )
         
 
@@ -224,10 +244,22 @@ $( function() {
             // if(value.address == "/muse/elements/experimental/mellow"){
             //   add_point(value.args[0],1)
             // }
-            add_point(value[1]>.4?.4:(value[1]<.10?.10:value[1]),value[0])
             if (!w.last){
                 w.last = {l:[],r:[]}
             }
+            if (!w.last_real_value){
+                w.last_real_value = {l:[],r:[]}
+            }
+            try{
+              // console.error('Old Value: ', value[1])
+              w.last_real_value[lorr][value[0]] = value[1]
+              var total = w.last_real_value[lorr].reduce(function(a,b){return a + b})
+              value[1] = value[1] / total
+              // value[1] = value[1] * value[1] * value[1]
+              // console.warn('New Value: ', value[1])
+            }catch(e){}
+            
+            add_point(value[1],value[0])
             w.last[lorr][value[0]] = value[1]
 
 
@@ -252,7 +284,7 @@ $( function() {
                  // Alpha 0
                  // Beta 2
                  // Gamma 4
-                 var b = notes[i];
+                 var b = notes[i]
                  w[lorr] = b
                  if (thing > .1)
                     w.lastUpdated = new Date()
@@ -269,11 +301,11 @@ $( function() {
                  }
                  if (w.last_l === w.last_r) {
                     $('#ur').html(
-                        '<div>You are ' + phrases[w.last_l] + '.</div>')
+                        '<div>' + phrases[w.last_l] + '</div>')
                  } else {
                     $('#ur').html(
-                        '<div style="width:50%;">Your left side is ' + phrases[w.last_r] + '.</div>'
-                        + '<div style="width:50%;">Your right side is ' + phrases[w.last_l] + '.</div>'
+                        '<div style="width:50%;">' + phrases[w.last_r] + '</div>'
+                        + '<div style="width:50%;">' + phrases[w.last_l] + '</div>'
                     )
                  }
                  
@@ -301,8 +333,8 @@ $( function() {
         } );
     }
 
-    chart( [1, n - 2], "none", function tick(path, line, data, x) {}, 'l' );
-    chart( [1, n - 2], "none", function tick(path, line, data, x) {}, 'r' );
+    chart('l');
+    chart('r');
 
 } );
 
