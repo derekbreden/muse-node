@@ -12,9 +12,84 @@
   </head>
 
   <body>
-		<script type="text/javascript" src="./bower_components/highcharts/highcharts.js"></script>
-		<img class="logo" src="images/divinediva-logo-flat.png" />		
-    	
+    <style>
+    .b{
+      width: 500px;
+      height: 500px;
+      background: url('/images/p.png');
+      background-size: 1360px 496px;
+      background-position: 0px -208px;
+      height: 48px;
+      width: 80px;
+    }
+    .btr{
+      width: 88px;
+      background-position: 0px -248px;
+      margin-left: -34px;
+      z-index: -1;
+      height: 56px;
+    }
+    .btr2{
+      width: 88px;
+      background-position: 0px -248px;
+      margin-left: -128px;
+      margin-top: 40px;
+      margin-right: 47px;
+      opacity: 1;
+      height: 17px;
+      z-index: -1;
+    }
+    .f{
+      width: 33px;
+      height: 32px;
+      background: url('/images/p.png');
+      background-size: 1360px 496px;
+    }
+    .f1{background-position: 449px 0px;}
+    .f2{background-position: 417px 0px;}
+    .f3{background-position: 449px -32px;}
+    .f4{background-position: 417px -32px;}
+    .f5{background-position: 449px -64px;}
+    .f6{background-position: 417px -64px;}
+    .f7{background-position: 449px -96px;}
+    .f8{background-position: 417px -96px;}
+    </style>
+    <div style="display:flex;flex-direction:row;position:absolute; top: 20px;left:50%;margin-left: -300px;">
+      <div style="opacity:1;display:flex;flex-direction:row; padding: 20px;">
+        <div style="display:flex;flex-direction:row;z-index:1;">
+          <div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b btr"></div><div class="b btr2"></div>
+        </div>
+        <div style="display:flex;flex-direction:row;transform:rotate(90deg);
+        margin-left: -346px;
+        margin-top: 300px;
+        z-index: -1;
+        ">
+          <div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b btr"></div><div class="b btr2"></div>
+        </div>
+      </div>
+      <div style="position:absolute;left:-338px;top:275px;display:flex;flex-direction:row; padding: 20px; transform:rotate(180deg);">
+        <div style="display:flex;flex-direction:row;z-index:1;">
+          <div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b btr"></div><div class="b btr2"></div>
+        </div>
+        <div style="display:flex;flex-direction:row;transform:rotate(90deg);
+        margin-left: -346px;
+        margin-top: 300px;
+        z-index: -1;
+        ">
+          <div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b btr"></div><div class="b btr2"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="f f1"></div>
+    <div class="f f2"></div>
+    <div class="f f3"></div>
+    <div class="f f4"></div>
+    <div class="f f5"></div>
+    <div class="f f6"></div>
+    <div class="f f7"></div>
+    <div class="f f8"></div>
+    
 		<div class="main-container">
 			<ol>
 				<!-- <li style="color: red;">Concentration</li> -->
@@ -54,6 +129,5 @@
 		</div>
     <div style="position: absolute;top:-3px;right:10px;color: #EEE;font-size: 12px;" id="battery">
     </div>
-
   </body>
 </html>

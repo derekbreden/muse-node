@@ -1,6 +1,6 @@
 $( function() {
 
-    var play_b = function(notes_to_play) {
+    var play_b = function(notes_to_play, note) {
         (function(){ 
             var conductor = new BandJS();
 
@@ -12,14 +12,21 @@ $( function() {
             // var rightHand = conductor.createInstrument('square', 'oscillators');
             // var leftHand = conductor.createInstrument('triangle', 'oscillators');
             // var drum = conductor.createInstrument('white', 'noises');
-            piano.rest('sixteenth')
-            piano.setVolume(notes_to_play[0][1])
-            piano.note('eighth', notes_to_play[0][0])
-            piano.setVolume(notes_to_play[1][1])
-            piano.note('sixteenth', notes_to_play[1][0])
-            piano.setVolume(notes_to_play[2][1])
-            piano.note('sixteenth', notes_to_play[2][0])
-            piano.rest('sixteenth')
+            if (note) {
+              piano.rest('sixteenth')
+              piano.setVolume(note[1])
+              piano.note('eighth', note[0])
+              
+            } else {
+              piano.rest('sixteenth')
+              piano.setVolume(notes_to_play[0][1])
+              piano.note('eighth', notes_to_play[0][0])
+              piano.setVolume(notes_to_play[1][1])
+              piano.note('sixteenth', notes_to_play[1][0])
+              piano.setVolume(notes_to_play[2][1])
+              piano.note('sixteenth', notes_to_play[2][0])
+              piano.rest('sixteenth')  
+            }
             // Bar 35
             // rightHand.note('quarter', b)
             //     .rest('quarter')
@@ -42,39 +49,57 @@ $( function() {
         return
     
     
-    var notes_to_play = []
-    w.last.r.forEach(function(val, i){
-      var rank = w.last.r.map(function(){return arguments[0]}).sort(function(a,b){return b - a}).indexOf(w.last.r[i])
-      // setTimeout(function(){
-        // console.log('r', labels[i],notes[i],Math.floor(val * 100))
-      notes_to_play[rank] = [notes[i], Math.floor(val * 100)]
-        // play_b(notes[i], Math.floor(val * 100))
-      // }, rank * 300)
-    })
-    play_b(notes_to_play)
-    
-    setTimeout(function(){
+    var play_notes_for_side = function(side){
       var notes_to_play = []
-      w.last.l.forEach(function(val, i){
-        var rank = w.last.l.map(function(){return arguments[0]}).sort(function(a,b){return b - a}).indexOf(w.last.l[i])
-        notes_to_play[rank] = [notes[i], Math.floor(val * 100)]
+      w.last[side].forEach(function(val, i){
+        var rank = w.last[side].map(function(){return arguments[0]}).sort(function(a,b){return b - a}).indexOf(w.last[side][i])
         // setTimeout(function(){
-        //   console.log('l', labels[i],notes[i],Math.floor(val * 100))
-        //   play_b(notes[i], Math.floor(val * 100))
+          // console.log('r', labels[i],notes[i],Math.floor(val * 100))
+        notes_to_play[rank] = [notes[i], rank === 0 ? 30 : 0, w.last[side][i], i]
+          // play_b(notes[i], Math.floor(val * 100))
         // }, rank * 300)
       })
-      play_b(notes_to_play)
-    }, 1000)
+      var meh = Math.floor((notes_to_play[0][2] - notes_to_play[1][2])*15)
+      var vol = meh * 20 + 20
+      vol = (vol > 100 ? 100 : vol)
+      notes_to_play[0][1] = vol
+      if (notes_to_play[0][3] === 1)
+        play_b(false, notes_to_play[0])
+    }
+    play_notes_for_side('r')
+    setTimeout(function(){
+      play_notes_for_side('l')
+    }, 500)
     
     
     return
         
         
-    play_b(w.r, 'r', 100)
-    setTimeout(function(){
-        play_b(w.l, 'l', 100)
-    }, 300)
-  }, 4000)
+    // play_b(w.r, 'r', 100)
+    // setTimeout(function(){
+    //     play_b(w.l, 'l', 100)
+    // }, 300)
+  }, 3000)
+  setTimeout(function(){
+    if (new Date() - 1000 > w.lastUpdated)
+        return
+    
+    
+    var play_notes_for_side = function(side){
+      var notes_to_play = []
+      w.last[side].forEach(function(val, i){
+        var rank = w.last[side].map(function(){return arguments[0]}).sort(function(a,b){return b - a}).indexOf(w.last[side][i])
+        notes_to_play[rank] = [notes[i], rank === 0 ? 30 : 0, w.last[side][i], i]
+      })
+      if (notes_to_play[0][3] === 1){
+        console.log('pac')
+      }
+    }
+    play_notes_for_side('r')
+    play_notes_for_side('l')
+    
+    
+  },200)
     var n = 5,
         random = d3.random.normal( 0, 0 );
         
@@ -89,42 +114,42 @@ $( function() {
     //
     //
     var addresses = [
-        '/muse/elements/alpha_relative',
+        // '/muse/elements/alpha_relative',
         '/muse/elements/theta_relative',
         '/muse/elements/beta_relative',
         // '/muse/elements/delta_relative',
         // '/muse/elements/gamma_relative',
       ]
     var colors = [
-      "#33cc33",
+      // "#33cc33",
       "#993366",
       "#996633",
       // "#663399",
       // "#336699"
     ]
     var notes = [
-      'A4',
+      // 'A4',
       'A3',
-      'A5',
+      'A4',
       // false,
       // false,
      ]
      var sizes = [12, 18, 24, 48, 72]
      var labels = [
-       'Alpha',
+      //  'Alpha',
        'Theta',
        'Beta',
       //  'Delta',
       //  'Gamma'
      ]
      var phrases = [
-      'Relaxed',
+      // 'Relaxed',
       'Tired',
       'Focus',
       // 'ADHD',
       // 'Stress'
     ]
-     var average_over = 200
+     var average_over = 100
      //
      //
      //
@@ -153,7 +178,7 @@ $( function() {
         })
       }
     })
-
+    var n = 400
     function chart(lorr) {
         var data = [d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random )];
 
@@ -167,7 +192,7 @@ $( function() {
             height = window.innerHeight - 100;
 
         var x = d3.scale.linear()
-            .domain( [0, 4] )
+            .domain( [0, n] )
             .range( [0, width] );
 
         var y = d3.scale.linear()
@@ -216,7 +241,8 @@ $( function() {
             .style( "stroke", function(d, i) {
                 return colors[i];
             } )
-            .style( "stroke-width", 30)
+            .style( "stroke-width", 10)
+            .style( "stroke-width", 10)
             // .style( "stroke-opacity", .5)
             .attr( "d", line )
         
