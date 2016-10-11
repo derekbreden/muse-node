@@ -80,23 +80,33 @@ $( function() {
     //     play_b(w.l, 'l', 100)
     // }, 300)
   }, 3000)
-  setTimeout(function(){
+  setInterval(function(){
     if (new Date() - 1000 > w.lastUpdated)
         return
     
-    
+        
+
     var play_notes_for_side = function(side){
       var notes_to_play = []
       w.last[side].forEach(function(val, i){
         var rank = w.last[side].map(function(){return arguments[0]}).sort(function(a,b){return b - a}).indexOf(w.last[side][i])
+        // setTimeout(function(){
+          // console.log('r', labels[i],notes[i],Math.floor(val * 100))
         notes_to_play[rank] = [notes[i], rank === 0 ? 30 : 0, w.last[side][i], i]
+          // play_b(notes[i], Math.floor(val * 100))
+        // }, rank * 300)
       })
-      if (notes_to_play[0][3] === 1){
-        console.log('pac')
-      }
+      var meh = Math.floor((notes_to_play[0][2] - notes_to_play[1][2])*15)
+      var vol = meh * 20 + 20
+      vol = (vol > 100 ? 100 : vol)
+      notes_to_play[0][1] = vol
+      if (notes_to_play[0][3] === 1)
+        w.increment_pac(Math.floor(meh/2) + 1)
     }
     play_notes_for_side('r')
-    play_notes_for_side('l')
+    setTimeout(function(){
+      play_notes_for_side('l')
+    }, 500)
     
     
   },200)
@@ -149,7 +159,7 @@ $( function() {
       // 'ADHD',
       // 'Stress'
     ]
-     var average_over = 100
+     var average_over = 10
      //
      //
      //
@@ -178,12 +188,12 @@ $( function() {
         })
       }
     })
-    var n = 400
+    var n = 200
     function chart(lorr) {
         var data = [d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random )];
 
         var margin = {
-                top: -60,
+                top: 20,
                 right: 0,
                 bottom: 0,
                 left: 25
@@ -243,7 +253,7 @@ $( function() {
             } )
             .style( "stroke-width", 10)
             .style( "stroke-width", 10)
-            // .style( "stroke-opacity", .5)
+            .style( "stroke-opacity", .3)
             .attr( "d", line )
         
 
@@ -361,6 +371,56 @@ $( function() {
 
     chart('l');
     chart('r');
+    
+    w.draw_pac = function(){
+      $('#pac').css({
+        left: w.pac_position * 3 + 0,
+        top: 0
+      })
+      .removeClass('f1 f2 f3 f4 f5 f6 f7 f8')
+      .addClass(
+        ['f1','f2'][((Math.floor(w.pac_position / 2)) % 2)]
+      )
+      $('#past1').css({
+        width: w.pac_position * 3 + 0
+      })
+    }
+    w.increment_pac = function(n){
+      
+        if (!w.pac_start)
+          w.pac_start = new Date()
+        if (w.pac_paused) return
+        if (!w.pac_position) {
+          w.pac_position = 0
+        }
+        for (var i = 0; i < n; i++){
+          w.pac_position++
+          w.draw_pac()
+        }
+        if (w.pac_position > 204){
+          w.pac_paused = true
+          setTimeout(function(){
+            $('#pac-container').fadeOut(800)
+          }, 1000)
+          setTimeout(function(){
+            var interval = Math.floor((new Date() - w.pac_start) / 1000)
+            w.pac_start = false
+            $('#pac-result').html('Finished in ' + interval + ' seconds.')
+            $('#pac-result').fadeIn(300)
+          }, 2000)
+          setTimeout(function(){
+            $('#pac-result').fadeOut(800)
+            setTimeout(function(){
+              w.pac_position = 0
+              w.draw_pac()
+              $('#pac-container').fadeIn(300)
+              setTimeout(function(){
+                w.pac_paused = false
+              }, 2000)
+            }, 2000)
+          }, 10000)
+        }
+    }
 
 } );
 
