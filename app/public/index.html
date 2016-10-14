@@ -13,6 +13,85 @@
 
   <body>
     <style>
+      .l1 > *:hover {
+        text-decoration: underline;
+      }
+      .l1 > *:active,
+      .l1.s1 > *:nth-child(2),
+      .l1.s2 > *:nth-child(1),
+      .l1.s3 > *:nth-child(3),
+      .l1.s4 > *:nth-child(4),
+      .l1.s5 > *:nth-child(5),
+      .l1.s6 > *:nth-child(6) {
+        color: #FFF;
+      }
+    </style>
+    <div style="
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: #666;
+      z-index: 99;
+      font-size: 16px;
+      padding: 40px 20px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      width: 100%;
+    " class="l1 s2">
+      <div style="
+        "
+        onclick="
+          w.reset_chart(['/muse/elements/theta_relative','/muse/elements/beta_relative']);
+          $('.l1').removeClass('s1 s2 s3 s4 s5 s6').addClass('s2');
+        "
+      >
+        Beta vs Theta
+      </div>
+      <div style="
+        "
+        onclick="
+          w.reset_chart(['/muse/elements/delta_relative','/muse/elements/alpha_relative']);
+          $('.l1').removeClass('s1 s2 s3 s4 s5 s6').addClass('s1');
+        "
+      >
+        Alpha vs Delta
+      </div>
+      <div
+        onclick="
+          w.reset_chart(['/muse/elements/alpha_relative','/muse/elements/beta_relative']);
+          $('.l1').removeClass('s1 s2 s3 s4 s5 s6').addClass('s3');
+        "
+      >
+        Beta vs Alpha
+      </div>
+      <div
+        onclick="
+          w.reset_chart(['/muse/elements/beta_relative','/muse/elements/alpha_relative']);
+          $('.l1').removeClass('s1 s2 s3 s4 s5 s6').addClass('s4');
+        "
+      >
+        Alpha vs Beta
+      </div>
+      <div
+        onclick="
+          w.reset_chart(['/muse/elements/delta_relative','/muse/elements/theta_relative']);
+          $('.l1').removeClass('s1 s2 s3 s4 s5 s6').addClass('s5');
+        "
+      >
+        Theta vs Delta
+      </div>
+      <div
+        onclick="
+          w.reset_chart(['/muse/elements/beta_relative','/muse/elements/theta_relative']);
+          $('.l1').removeClass('s1 s2 s3 s4 s5 s6').addClass('s6');
+        "
+      >
+        Theta vs Beta
+      </div>
+    </div>
+    <style>
     .b{
       width: 500px;
       height: 500px;
@@ -60,22 +139,35 @@
       background-size: 1360px 496px;
       background-position: -13px -6px;
     }
-    </style>
-    
-    <div id="pac-result" style="
+    #pac-result {
       height: 90px; width: 100%; overflow: hidden; display: block; position: absolute;
       top: 70px;
       text-align: center;
       color: #BBB;
       line-height: 90px;
       font-size: 18px;
-    ">
-    </div>
-    <div id="pac-container" style="
+    }
+    #pac-container {
       height: 90px; width: 100%; overflow: hidden; display: block; position: absolute;
+      top: 140px;
+    }
+    #pac-container > div:first-child {
+      display:flex;flex-direction:row;position:absolute; top: 20px;left:50%;margin-left: -300px;z-index:-2;
+    }
+    #pac-container > div:last-child {
+      position:absolute;
+      left:50%;
+      width: 650px;
+      margin-left: -325px;
+      height: 650px;
       top: 50px;
-    ">
-      <div style="display:flex;flex-direction:row;position:absolute; top: 20px;left:50%;margin-left: -300px;z-index:-2;">
+      z-index: -1;
+    }
+    </style>
+    
+    <div id="pac-result"></div>
+    <div id="pac-container">
+      <div>
         <div style="opacity:1;display:flex;flex-direction:row; padding: 20px;">
           <div style="display:flex;flex-direction:row;z-index:1;">
             <div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b btr"></div><div class="b btr2"></div>
@@ -101,15 +193,7 @@
           </div>
         </div>
       </div>
-      <div style="
-        position:absolute;
-        left:50%;
-        width: 650px;
-        margin-left: -325px;
-        height: 650px;
-        top: 50px;
-        z-index: -1;
-      ">
+      <div>
         <div style="display:flex;flex-direction:row;position:absolute;top:-4px;left:0;">
           <div class="p"></div><div class="p"></div><div class="p"></div>
           <div class="p"></div><div class="p"></div><div class="p"></div>
@@ -128,16 +212,9 @@
         "></div>
       </div>
     </div>
+
     
-		<div class="main-container" style="">
-			<ol>
-				<!-- <li style="color: red;">Concentration</li> -->
-  			<!--<li style="color: #00CC00;">Alpha</li>
-				<li style="color: #0000CC;">Beta</li>
-				<li style="color: #000000;">Theta</li>-->
-			</ol>
-		</div>
-    <!-- text-shadow: 0px 0px 10px #666,0px 0px 10px #666,0px 0px 10px #666,0px 0px 10px #666,0px 0px 10px #666,0px 0px 10px #666; -->
+    
 		<div style="position:absolute;top:0;left:0;width:100%;color:#BBB;
     font-size: 36px;
     font-weight: bold;

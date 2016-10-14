@@ -14,18 +14,31 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded())
 app.use(express.static(__dirname + '/public'));
 
+var udpPort = last_udp_port = new osc.UDPPort({
+    localAddress: "127.0.0.1",
+    localPort: 5000
+});
+
+udpPort.open();
+var last_udp_bind = false
+udpPort.on("message", function(){
+  if (last_udp_bind) {
+    last_udp_bind.apply(this, arguments)
+  }
+});
+
 io.on('connection', function (socket) {
+  console.log('New connection')
+  
+  socket.on('error', function(){
+    console.error(arguments)
+  })
 
   socket.on('s', function(value){
+    console.log('New connection init')
     var addresses = value[0]
     var average_over = value[1]
     
-    var udpPort = new osc.UDPPort({
-        localAddress: "127.0.0.1",
-        localPort: 5000
-    });
-
-    udpPort.open();
   var locked = []
   var checkLock = function(b){
     if(locked[b]){
@@ -45,7 +58,7 @@ io.on('connection', function (socket) {
     r[b].pop()
     return r[b].reduce(function(prev, cur){ return (prev || 0) + cur }) / r[b].length
   }
-    var udpBind = function (oscData) {
+    var udpBind = last_udp_bind = function (oscData) {
       var i = addresses.indexOf(oscData.address)
       if (i !== -1) {
         // if (checkLock(i)) {
@@ -63,9 +76,11 @@ io.on('connection', function (socket) {
         socket.emit('b', JSON.parse(oscData.args[0]).battery_percent_remaining)
       }
   	}
-  	udpPort.on("message", udpBind);
+    socket.on('e', function(){
+      console.log('closing')
+    })
     socket.on('disconnect', function(){
-      udpPort.close()
+      console.log('disconnecting')
     })
   })
 
