@@ -2,6 +2,10 @@ $( function() {
 
     var play_b = function(notes_to_play, note) {
         (function(){ 
+            if (w.player){
+              w.player.play()
+              return;
+            }
             var conductor = new BandJS();
 
             conductor.setTimeSignature(4, 4);
@@ -31,11 +35,14 @@ $( function() {
             // rightHand.note('quarter', b)
             //     .rest('quarter')
             //     .rest('half');
-            var player = conductor.finish();
-            player.play()
-            conductor.setOnFinishedCallback(function(){
-              conductor.audioContext.close();
-            })
+            w.player = conductor.finish();
+            w.player.play()
+            
+            // var player = conductor.finish();
+            // player.play()
+            // conductor.setOnFinishedCallback(function(){
+            //   conductor.audioContext.close();
+            // })
         })()
     }
   
@@ -45,77 +52,89 @@ $( function() {
   w.locked = false;
   w.cache = {};
   setInterval(function(){
-    if (new Date() - 1000 > w.lastUpdated)
-        return
-    
-    
-    var play_notes_for_side = function(side){
-      var notes_to_play = []
-      w.last[side].forEach(function(val, i){
-        var rank = w.last[side].map(function(){return arguments[0]}).sort(function(a,b){return b - a}).indexOf(w.last[side][i])
-        // setTimeout(function(){
-          // console.log('r', labels[i],w.notes[i],Math.floor(val * 100))
-        notes_to_play[rank] = [w.notes[i], rank === 0 ? 30 : 0, w.last[side][i], i]
-          // play_b(notes[i], Math.floor(val * 100))
-        // }, rank * 300)
-      })
-      var meh = Math.floor((notes_to_play[0][2] - notes_to_play[1][2])*15)
-      var vol = meh * 20 + 20
-      vol = (vol > 100 ? 100 : vol)
-      notes_to_play[0][1] = vol
-      if (notes_to_play[0][3] === 1)
-        play_b(false, notes_to_play[0])
+    if (w.last_to_increment === 1) {
+      play_b(false, ['D4', 30])
+    } else if (w.last_to_increment === 2) {
+      play_b(false, ['D4', 30])
     }
-    play_notes_for_side('r')
-    setTimeout(function(){
-      play_notes_for_side('l')
-    }, 500)
-    
-    
-    return
-        
-        
-    // play_b(w.r, 'r', 100)
-    // setTimeout(function(){
-    //     play_b(w.l, 'l', 100)
-    // }, 300)
-  }, 3000)
+  }, 500)
   setInterval(function(){
     if (new Date() - 1000 > w.lastUpdated)
         return
     
         
 
-    var play_notes_for_side = function(side){
-      var notes_to_play = []
-      w.last[side].forEach(function(val, i){
-        var rank = w.last[side].map(function(){return arguments[0]}).sort(function(a,b){return b - a}).indexOf(w.last[side][i])
-        // setTimeout(function(){
-          // console.log('r', labels[i],w.notes[i],Math.floor(val * 100))
-        notes_to_play[rank] = [w.notes[i], rank === 0 ? 30 : 0, w.last[side][i], i]
-          // play_b(w.notes[i], Math.floor(val * 100))
-        // }, rank * 300)
-      })
-      var meh = Math.floor((notes_to_play[0][2] - notes_to_play[1][2])*15)
-      var vol = meh * 20 + 20
-      vol = (vol > 100 ? 100 : vol)
-      notes_to_play[0][1] = vol
-      if (notes_to_play[0][3] === 1)
-        w.increment_pac(Math.floor(meh/4) + 1)
+    // var play_notes_for_side = function(side){
+    //   var notes_to_play = []
+    //   w.last[side].forEach(function(val, i){
+    //     var rank = w.last[side].map(function(){return arguments[0]}).sort(function(a,b){return b - a}).indexOf(w.last[side][i])
+    //     // setTimeout(function(){
+    //       // console.log('r', labels[i],w.notes[i],Math.floor(val * 100))
+    //     notes_to_play[rank] = [w.notes[i], rank === 0 ? 30 : 0, w.last[side][i], i]
+    //       // play_b(w.notes[i], Math.floor(val * 100))
+    //     // }, rank * 300)
+    //   })
+    //   var meh = Math.floor((notes_to_play[0][2] - notes_to_play[1][2])*15)
+    //   var vol = meh * 20 + 20
+    //   vol = (vol > 100 ? 100 : vol)
+    //   notes_to_play[0][1] = vol
+    //   if (notes_to_play[0][3] === 1)
+    //     w.increment_pac(Math.floor(meh/4) + 1)
+    // }
+    // play_notes_for_side('r')
+    // play_notes_for_side('l')
+    
+    if (w.last_last){
+      var a = w.last.r[0] - w.last_last.r[0]
+      var b = w.last.l[0] - w.last_last.l[0]
+      
+      var rank1 = w.last.r.map(function(){return arguments[0]}).sort(function(a,b){return b - a}).indexOf(w.last.r[0])
+      var rank2 = w.last.l.map(function(){return arguments[0]}).sort(function(a,b){return b - a}).indexOf(w.last.l[0])
+      
+      
+      var to_increment = 0
+      if (w.last_left_right_both === 'left') {
+        if (rank1 === 0){
+          to_increment = 2
+        } else {
+          if (a > 0)
+            to_increment = 2
+        }
+      }
+      if (w.last_left_right_both === 'right') {
+        if (rank2 === 0){
+          to_increment = 2
+        } else {
+          if (b > 0)
+            to_increment = 2
+        }
+      }
+      if (w.last_left_right_both === 'both') {
+        if (rank1 === 0 && rank2 === 0){
+          to_increment = 2
+        } else {
+          if (a + b > 0)
+            to_increment = 2
+        }
+      }
+      if (to_increment)
+        w.increment_pac(to_increment)
+      w.last_to_increment = to_increment
+      
     }
-    play_notes_for_side('r')
-    setTimeout(function(){
-      play_notes_for_side('l')
-    }, 500)
+    w.last_last = {
+      r:Array.prototype.slice.apply(w.last.r),
+      l:Array.prototype.slice.apply(w.last.l)
+    }
     
     
-  },200)
+  }, 100)
     var n = 5,
         random = d3.random.normal( 0, 0 );
         
 
 
-    w.reset_chart = function(addresses_in){
+    w.reset_chart = function(addresses_in, average_over_in, left_right_both_in){
       if (!w.socket){
         w.socket = io.connect( "http://localhost:3000" );
         
@@ -228,19 +247,20 @@ $( function() {
       //
       //
       //
-      var addresses = addresses_in || [
-          // '/muse/elements/alpha_relative',
-          '/muse/elements/theta_relative',
-          '/muse/elements/beta_relative',
-          // '/muse/elements/delta_relative',
-          // '/muse/elements/gamma_relative',
+      var left_right_both = w.last_left_right_both = left_right_both_in || w.last_left_right_both || 'both'
+      var addresses = w.last_addresses = addresses_in || w.last_addresses || [
+          // '/muse/elements/alpha_absolute',
+          '/muse/elements/theta_absolute',
+          '/muse/elements/beta_absolute',
+          // '/muse/elements/delta_absolute',
+          // '/muse/elements/gamma_absolute',
         ]
       var color_choices = {
-        '/muse/elements/alpha_relative': '#339933',
-        '/muse/elements/theta_relative': '#993333',
-        '/muse/elements/beta_relative': '#336699',
-        '/muse/elements/delta_relative': '#663399',
-        '/muse/elements/gamma_relative': ''
+        '/muse/elements/alpha_absolute': '#336699',
+        '/muse/elements/theta_absolute': '#993333',
+        '/muse/elements/beta_absolute': '#339933',
+        '/muse/elements/delta_absolute': '#663399',
+        '/muse/elements/gamma_absolute': ''
       }
       
         // // "#33cc33",
@@ -275,7 +295,7 @@ $( function() {
         // 'ADHD',
         // 'Stress'
       ]
-       var average_over = 20
+       var average_over = w.last_average_over = average_over_in || w.last_average_over || 20
        //
        //
        //
@@ -295,14 +315,14 @@ $( function() {
                   left: 25
               },
               width = window.innerWidth / 2 - 100,
-              height = window.innerHeight - 100;
+              height = window.innerHeight - 300;
 
           var x = d3.scale.linear()
               .domain( [0, n] )
               .range( [0, width] );
 
           var y = d3.scale.linear()
-              .domain( [0, 1] )
+              .domain( [0, 2] )
               .range( [height, 0] );
 
           var line = d3.svg.line()
@@ -330,7 +350,7 @@ $( function() {
 
           var lines = svg.selectAll( "g" )
               .data( data );
-
+          
           var aLineContainer = lines
               .enter().append( "g" );
 
@@ -343,14 +363,14 @@ $( function() {
           var path = aLineContainer
               .attr( "clip-path", "url(#clip)" )
               .append( "path" )
-              //.data(data)
+              .data(data)
               .attr( "class", "line" )
               .style( "stroke", function(d, i) {
                   return colors[i];
               } )
               .style( "stroke-width", 10)
-              .style( "stroke-width", 10)
-              .style( "stroke-opacity", .3)
+              .style( "stroke-width", 2)
+              .style( "stroke-opacity", 1)
               .attr( "d", line )
           
 
@@ -369,20 +389,22 @@ $( function() {
       chart('r');
     }
     
-    w.reset_chart()
+    $('#addresses :nth-child(3)').click()
+    $('#average_over :nth-child(6)').click()
+    $('#left_right_both :nth-child(1)').click()
 
     
     w.draw_pac = function(){
       $('#pac').css({
-        left: w.pac_position * 3 + 0,
+        left: w.pac_position * 2 + 0,
         top: 0
       })
       .removeClass('f1 f2 f3 f4 f5 f6 f7 f8')
       .addClass(
-        ['f1','f2'][((Math.floor(w.pac_position / 2)) % 2)]
+        ['f1','f2'][((Math.floor(w.pac_position / 4)) % 2)]
       )
       $('#past1').css({
-        width: w.pac_position * 3 + 0
+        width: w.pac_position * 2 + 0
       })
     }
     w.increment_pac = function(n){
@@ -397,35 +419,17 @@ $( function() {
           w.pac_position++
           w.draw_pac()
         }
-        if (w.pac_position > 204){
+        if (w.pac_position > 306){
           w.pac_paused = true
           setTimeout(function(){
-            $('#pac-container').fadeOut(800)
-          }, 1000)
-          setTimeout(function(){
-            var interval = Math.floor((new Date() - w.pac_start) / 1000)
-            w.pac_start = false
-            $('#pac-result').html('Finished in ' + interval + ' seconds.')
-            $('#pac-result').fadeIn(300)
-            // w.reset_chart([
-            //   '/muse/elements/delta_relative',
-            //   '/muse/elements/alpha_relative',
-            //   // '/muse/elements/theta_relative',
-            //   // '/muse/elements/beta_relative',
-            //   // '/muse/elements/gamma_relative',
-            // ])
-          }, 2000)
-          setTimeout(function(){
-            $('#pac-result').fadeOut(800)
+            $('#pac-container').hide()
+            w.pac_position = 0
+            w.draw_pac()
             setTimeout(function(){
-              w.pac_position = 0
-              w.draw_pac()
-              $('#pac-container').fadeIn(300)
-              setTimeout(function(){
-                w.pac_paused = false
-              }, 2000)
-            }, 2000)
-          }, 10000)
+              $('#pac-container').show()
+              w.pac_paused = false
+            }, 100)
+          }, 100)
         }
     }
 

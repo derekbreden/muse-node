@@ -14,18 +14,29 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded())
 app.use(express.static(__dirname + '/public'));
 
-var udpPort = last_udp_port = new osc.UDPPort({
-    localAddress: "127.0.0.1",
-    localPort: 5000
+var osc = require('node-osc');
+
+var udpConn = new osc.Server(5000, '10.0.0.34');
+var last_udp_bind = false
+udpConn.on('message',function () {
+    if (last_udp_bind) {
+      last_udp_bind.apply(this, arguments)
+    }
 });
 
-udpPort.open();
-var last_udp_bind = false
-udpPort.on("message", function(){
-  if (last_udp_bind) {
-    last_udp_bind.apply(this, arguments)
-  }
-});
+// var udpPort = last_udp_port = new osc.UDPPort({
+//     host: "10.0.0.34",
+//     port: 5000
+// });
+// 
+// udpPort.open();
+// var last_udp_bind = false
+// udpPort.on("message", function(){
+//   console.log(arguments)
+//   if (last_udp_bind) {
+//     last_udp_bind.apply(this, arguments)
+//   }
+// });
 
 io.on('connection', function (socket) {
   console.log('New connection')
@@ -59,11 +70,15 @@ io.on('connection', function (socket) {
     return r[b].reduce(function(prev, cur){ return (prev || 0) + cur }) / r[b].length
   }
     var udpBind = last_udp_bind = function (oscData) {
-      var i = addresses.indexOf(oscData.address)
+      oscData = oscData[2]
+      var i = addresses.indexOf(oscData[0])
+      // console.log(oscData[0], addresses)
       if (i !== -1) {
         // if (checkLock(i)) {
-  		    socket.emit('l', [i,avgMe(i,(oscData.args[0]+oscData.args[1])/2)]);
-  		    socket.emit('r', [i,avgMe(i+10,(oscData.args[2]+oscData.args[3])/2)]);
+  		    socket.emit('l', [i,avgMe(i,oscData[1])]);
+    		  socket.emit('r', [i,avgMe(i,oscData[1])]);
+  		    // socket.emit('r', [i,avgMe(i+10,(oscData[3]+oscData[4])/2)]);
+          // console.log(oscData)
           // socket.emit('m', [i,Math.round(50*arr.meanAbsoluteDeviation([
           //   oscData.args[0],
           //   oscData.args[1],
