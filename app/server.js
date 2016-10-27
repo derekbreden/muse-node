@@ -16,7 +16,7 @@ app.use(express.static(__dirname + '/public'));
 
 var osc = require('node-osc');
 
-var udpConn = new osc.Server(5000, '10.0.0.34');
+var udpConn = new osc.Server(5000, '10.0.0.169');
 var last_udp_bind = false
 udpConn.on('message',function () {
     if (last_udp_bind) {
@@ -63,11 +63,14 @@ io.on('connection', function (socket) {
   }
   var r = []
   var avgMe = function(b,avg){
-    if(!r[b])
-      r[b] = new Array(average_over).fill(0)
-    r[b].unshift(avg)
-    r[b].pop()
-    return r[b].reduce(function(prev, cur){ return (prev || 0) + cur }) / r[b].length
+    if(typeof r[b] === 'undefined'){
+      r[b] = new Array(average_over).fill(0)	
+		}
+    r[b].push(avg)
+    r[b].shift()
+		// console.log(r,b)
+		// console.log(r[b], arr.median(r[b]))
+    return arr.mean(r[b])
   }
     var udpBind = last_udp_bind = function (oscData) {
       oscData = oscData[2]
@@ -75,8 +78,8 @@ io.on('connection', function (socket) {
       // console.log(oscData[0], addresses)
       if (i !== -1) {
         // if (checkLock(i)) {
-  		    socket.emit('l', [i,avgMe(i,oscData[1])]);
-    		  socket.emit('r', [i,avgMe(i,oscData[1])]);
+  		    socket.emit('r', [i,avgMe(i,oscData[1])]);
+  		    // socket.emit('r', [i,oscData[1]]);
   		    // socket.emit('r', [i,avgMe(i+10,(oscData[3]+oscData[4])/2)]);
           // console.log(oscData)
           // socket.emit('m', [i,Math.round(50*arr.meanAbsoluteDeviation([

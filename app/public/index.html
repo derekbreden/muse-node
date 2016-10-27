@@ -13,7 +13,7 @@
 
   <body>
     <style>
-      * {
+      body, body > * {
         cursor: none;
       }
       .l1 > *:hover {
@@ -30,6 +30,7 @@
       }
     </style>
     <div style="
+      opacity: .4;
       position: absolute;
       text-align: center;
       left: calc(50% - 100px);
@@ -45,6 +46,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-around;
+      cursor: pointer;
     " id="addresses" class="l1 s2">
       <div style="
         "
@@ -73,6 +75,33 @@
       >
         Beta vs Alpha
       </div>
+      <div style="
+        "
+        onclick="
+          w.reset_chart(['/muse/elements/alpha_absolute','/muse/elements/beta_absolute']);
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6').addClass('s4');
+        "
+      >
+        Alpha vs Beta
+      </div>
+      <div style="
+        "
+        onclick="
+          w.reset_chart(['/muse/elements/alpha_absolute','/muse/elements/delta_absolute']);
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6').addClass('s5');
+        "
+      >
+        Alpha vs Delta
+      </div>
+      <div style="
+        "
+        onclick="
+          w.reset_chart(['/muse/elements/alpha_absolute','/muse/elements/theta_absolute']);
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6').addClass('s6');
+        "
+      >
+        Alpha vs Theta
+      </div>
     </div>
     
     
@@ -81,9 +110,11 @@
     <style>
     </style>
     <div style="
+      opacity: .4;
       position: absolute;
-      left: 0;
-      top: 70px;
+      left: 50%;
+      margin-left: -12.5%;
+      top: 560px;
       color: #666;
       z-index: 100;
       font-size: 16px;
@@ -97,8 +128,17 @@
       <div style="
         "
         onclick="
-          w.reset_chart(false, 10);
+          w.reset_chart(false, 1);
           $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s1');
+        "
+      >
+        1
+      </div>
+      <div style="
+        "
+        onclick="
+          w.reset_chart(false, 10);
+          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s2');
         "
       >
         10
@@ -107,7 +147,7 @@
         "
         onclick="
           w.reset_chart(false, 20);
-          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s2');
+          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s3');
         "
       >
         20
@@ -116,7 +156,7 @@
         "
         onclick="
           w.reset_chart(false, 40);
-          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s3');
+          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s4');
         "
       >
         40
@@ -125,28 +165,10 @@
         "
         onclick="
           w.reset_chart(false, 200);
-          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s4');
-        "
-      >
-        80
-      </div>
-      <div style="
-        "
-        onclick="
-          w.reset_chart(false, 200);
           $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s5');
         "
       >
-        200
-      </div>
-      <div style="
-        "
-        onclick="
-          w.reset_chart(false, 200);
-          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s6');
-        "
-      >
-        400
+        80
       </div>
     </div>
     

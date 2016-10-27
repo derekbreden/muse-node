@@ -1,3 +1,4 @@
+window.w = {};
 $( function() {
 
     var play_b = function(notes_to_play, note) {
@@ -46,16 +47,24 @@ $( function() {
         })()
     }
   
-  window.w = {};
-  
   w.lastUpdated = new Date()
   w.locked = false;
   w.cache = {};
   setInterval(function(){
-    if (w.last_to_increment === 1) {
-      play_b(false, ['D4', 30])
-    } else if (w.last_to_increment === 2) {
-      play_b(false, ['D4', 30])
+    var rank1 = w.last.r.map(function(){return arguments[0]}).sort(function(a,b){return b - a}).indexOf(w.last.r[0])
+    if (!w.last_rank1)
+       w.last_rank1 = rank1
+    var a = w.last.r[0] - w.last_last.r[0]
+    var to_increment = 0
+    if (rank1 === 0){
+      to_increment = 2
+    } else {
+      if (a > 0)
+        to_increment = 2
+    }
+    
+    if (to_increment === 2) {
+      play_b(false, ['D4', 10])
     }
   }, 500)
   setInterval(function(){
@@ -86,37 +95,35 @@ $( function() {
     
     if (w.last_last){
       var a = w.last.r[0] - w.last_last.r[0]
-      var b = w.last.l[0] - w.last_last.l[0]
+      // var b = w.last.l[0] - w.last_last.l[0]
       
       var rank1 = w.last.r.map(function(){return arguments[0]}).sort(function(a,b){return b - a}).indexOf(w.last.r[0])
-      var rank2 = w.last.l.map(function(){return arguments[0]}).sort(function(a,b){return b - a}).indexOf(w.last.l[0])
+      // var rank2 = w.last.l.map(function(){return arguments[0]}).sort(function(a,b){return b - a}).indexOf(w.last.l[0])
       
       
       var to_increment = 0
-      if (w.last_left_right_both === 'left') {
-        if (rank1 === 0){
+      if (rank1 === 0){
+        to_increment = 2
+      } else {
+        if (a > 0)
           to_increment = 2
-        } else {
-          if (a > 0)
-            to_increment = 2
-        }
       }
-      if (w.last_left_right_both === 'right') {
-        if (rank2 === 0){
-          to_increment = 2
-        } else {
-          if (b > 0)
-            to_increment = 2
-        }
-      }
-      if (w.last_left_right_both === 'both') {
-        if (rank1 === 0 && rank2 === 0){
-          to_increment = 2
-        } else {
-          if (a + b > 0)
-            to_increment = 2
-        }
-      }
+      // if (w.last_left_right_both === 'right') {
+      //   if (rank2 === 0){
+      //     to_increment = 2
+      //   } else {
+      //     if (b > 0)
+      //       to_increment = 2
+      //   }
+      // }
+      // if (w.last_left_right_both === 'both') {
+      //   if (rank1 === 0 && rank2 === 0){
+      //     to_increment = 2
+      //   } else {
+      //     if (a + b > 0)
+      //       to_increment = 2
+      //   }
+      // }
       if (to_increment)
         w.increment_pac(to_increment)
       w.last_to_increment = to_increment
@@ -231,9 +238,9 @@ $( function() {
         }
       } else {
         w.socket.emit('e')
-        w.svgs.l.remove()
+        // w.svgs.l.remove()
         w.svgs.r.remove()
-        w.socket.off('l', w.lorr_functions.l)
+        // w.socket.off('l', w.lorr_functions.l)
         w.socket.off('r', w.lorr_functions.r)
       }
       
@@ -309,13 +316,13 @@ $( function() {
           var data = [d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random )];
 
           var margin = {
-                  top: 20,
+                  top: 250,
                   right: 0,
                   bottom: 0,
-                  left: 25
+                  left: 0
               },
-              width = window.innerWidth / 2 - 100,
-              height = window.innerHeight - 300;
+              width = window.innerWidth - 1100,
+              height = window.innerHeight - 500;
 
           var x = d3.scale.linear()
               .domain( [0, n] )
@@ -338,12 +345,10 @@ $( function() {
           var svg = w.svgs[lorr] = d3.select( "body" ).append( "p" ).append( "svg" )
               .attr( "width", width + margin.left + margin.right )
               .attr( "height", height + margin.top + margin.bottom )
-              .style( "margin-left", margin.left + "px" )
-              .style( "margin-top", margin.top + "px" )
               .style({
                   position: 'absolute',
-                  left: 0 + (lorr==='l'?window.innerWidth/2:0),
-                  top: 0
+                  right: 20,
+                  bottom: -1
               })
               .append( "g" )
               .attr( "transform", "translate(" + margin.left + "," + margin.top + ")" );
@@ -370,7 +375,7 @@ $( function() {
               } )
               .style( "stroke-width", 10)
               .style( "stroke-width", 2)
-              .style( "stroke-opacity", 1)
+              .style( "stroke-opacity", .4)
               .attr( "d", line )
           
 
@@ -385,13 +390,9 @@ $( function() {
           socket.on( lorr, w.lorr_functions[lorr]);
       }
 
-      chart('l');
+      // chart('l');
       chart('r');
     }
-    
-    $('#addresses :nth-child(3)').click()
-    $('#average_over :nth-child(6)').click()
-    $('#left_right_both :nth-child(1)').click()
 
     
     w.draw_pac = function(){
@@ -432,6 +433,11 @@ $( function() {
           }, 100)
         }
     }
+
+    
+    $('#addresses :nth-child(3)').click()
+    $('#average_over :nth-child(3)').click()
+    $('#left_right_both :nth-child(1)').click()
 
 } );
 
