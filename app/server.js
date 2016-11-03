@@ -16,7 +16,17 @@ app.use(express.static(__dirname + '/public'));
 
 var osc = require('node-osc');
 
-var udpConn = new osc.Server(5000, '10.0.0.169');
+var ints = require('os').networkInterfaces()
+var ip
+Object.keys(ints).forEach(function(int){
+  ints[int].forEach(function(i){
+    if (i.address.match(/\./))
+      ip = i.address
+  })
+})
+
+var udpConn = new osc.Server(5000, ip);
+console.log(`UDP listening on ${ip}:5000`)
 var last_udp_bind = false
 udpConn.on('message',function () {
     if (last_udp_bind) {
@@ -106,7 +116,7 @@ io.on('connection', function (socket) {
 
 var port = Number(process.env.PORT || 3000);
 server.listen(port, function() {
-  console.log("Listening on " + port);
+  console.log(`HTTP listening on ${ip}:${port}`);
 });
 
 var arr = {	

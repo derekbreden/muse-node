@@ -1,10 +1,12 @@
-window.w = {};
+window.w = {
+  player: {}
+};
 $( function() {
 
     var play_b = function(notes_to_play, note) {
         (function(){ 
-            if (w.player){
-              w.player.play()
+            if (w.player[note[0]]){
+              w.player[note[0]].play()
               return;
             }
             var conductor = new BandJS();
@@ -36,8 +38,8 @@ $( function() {
             // rightHand.note('quarter', b)
             //     .rest('quarter')
             //     .rest('half');
-            w.player = conductor.finish();
-            w.player.play()
+            w.player[note[0]] = conductor.finish();
+            w.player[note[0]].play()
             
             // var player = conductor.finish();
             // player.play()
@@ -50,23 +52,6 @@ $( function() {
   w.lastUpdated = new Date()
   w.locked = false;
   w.cache = {};
-  setInterval(function(){
-    var rank1 = w.last.r.map(function(){return arguments[0]}).sort(function(a,b){return b - a}).indexOf(w.last.r[0])
-    if (!w.last_rank1)
-       w.last_rank1 = rank1
-    var a = w.last.r[0] - w.last_last.r[0]
-    var to_increment = 0
-    if (rank1 === 0){
-      to_increment = 2
-    } else {
-      if (a > 0)
-        to_increment = 2
-    }
-    
-    if (to_increment === 2) {
-      play_b(false, ['D4', 10])
-    }
-  }, 500)
   setInterval(function(){
     if (new Date() - 1000 > w.lastUpdated)
         return
@@ -103,7 +88,7 @@ $( function() {
       
       var to_increment = 0
       if (rank1 === 0){
-        to_increment = 2
+        to_increment = 4
       } else {
         if (a > 0)
           to_increment = 2
@@ -128,6 +113,14 @@ $( function() {
         w.increment_pac(to_increment)
       w.last_to_increment = to_increment
       
+      
+      if (to_increment === 2) {
+        play_b(false, ['D4', 30])
+      }
+      if (to_increment === 4) {
+        play_b(false, ['E4', 30])
+      }
+      
     }
     w.last_last = {
       r:Array.prototype.slice.apply(w.last.r),
@@ -135,13 +128,25 @@ $( function() {
     }
     
     
-  }, 100)
+  }, 500)
     var n = 5,
         random = d3.random.normal( 0, 0 );
         
 
 
     w.reset_chart = function(addresses_in, average_over_in, left_right_both_in){
+      if (addresses_in) {
+        addresses_in = addresses_in.split('').map(function(addy){
+          return '/muse/elements/' + {
+            a: 'alpha',
+            b: 'beta',
+            g: 'gamma',
+            t: 'theta',
+            d: 'delta'
+          }[addy] + '_absolute'
+        })
+      }
+      console.log(addresses_in)
       if (!w.socket){
         w.socket = io.connect( "http://localhost:3000" );
         
@@ -175,8 +180,9 @@ $( function() {
                 w.last_real_value = {l:[],r:[]}
             }
             try{
+              value[1] = value[1] + 1
               w.last_real_value[lorr][value[0]] = value[1]
-              var total = w.last_real_value[lorr].reduce(function(a,b){return a + b})
+              var total = w.last_real_value[lorr].reduce(function(a,b){return (a || 0) + b})
               value[1] = value[1] / total
             }catch(e){}
             var add_point = function(what,where){
@@ -264,9 +270,9 @@ $( function() {
         ]
       var color_choices = {
         '/muse/elements/alpha_absolute': '#336699',
-        '/muse/elements/theta_absolute': '#993333',
+        '/muse/elements/theta_absolute': '#993399',
         '/muse/elements/beta_absolute': '#339933',
-        '/muse/elements/delta_absolute': '#663399',
+        '/muse/elements/delta_absolute': '#990000',
         '/muse/elements/gamma_absolute': ''
       }
       
@@ -276,8 +282,11 @@ $( function() {
         // // "#663399",
         // // "#336699"
       var colors = [
-        color_choices[addresses[0]],
-        color_choices[addresses[1]]
+        '#339933',
+        '#336699',
+        '#003366',
+        '#003366',
+        '#003366'
       ]
       
       w.notes = [
@@ -311,25 +320,25 @@ $( function() {
        // -------------------------------------------------------------------------
     
       socket.emit('s', [addresses, average_over])
-      var n = 200
+      var n = 100
       function chart(lorr) {
           var data = [d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random )];
 
           var margin = {
-                  top: 250,
+                  top: 100,
                   right: 0,
                   bottom: 0,
                   left: 0
               },
-              width = window.innerWidth - 1100,
-              height = window.innerHeight - 500;
+              width = window.innerWidth - 200,
+              height = window.innerHeight;
 
           var x = d3.scale.linear()
               .domain( [0, n] )
               .range( [0, width] );
 
           var y = d3.scale.linear()
-              .domain( [0, 2] )
+              .domain( [.1, .4] )
               .range( [height, 0] );
 
           var line = d3.svg.line()
@@ -347,7 +356,7 @@ $( function() {
               .attr( "height", height + margin.top + margin.bottom )
               .style({
                   position: 'absolute',
-                  right: 20,
+                  right: 100,
                   bottom: -1
               })
               .append( "g" )
@@ -373,9 +382,8 @@ $( function() {
               .style( "stroke", function(d, i) {
                   return colors[i];
               } )
-              .style( "stroke-width", 10)
-              .style( "stroke-width", 2)
-              .style( "stroke-opacity", .4)
+              .style( "stroke-width", 3)
+              .style( "stroke-opacity", 1)
               .attr( "d", line )
           
 
@@ -397,15 +405,15 @@ $( function() {
     
     w.draw_pac = function(){
       $('#pac').css({
-        left: w.pac_position * 2 + 0,
+        left: w.pac_position * 6 + 0,
         top: 0
       })
       .removeClass('f1 f2 f3 f4 f5 f6 f7 f8')
       .addClass(
-        ['f1','f2'][((Math.floor(w.pac_position / 4)) % 2)]
+        ['f1','f2'][((Math.floor(w.pac_position)) % 2)]
       )
       $('#past1').css({
-        width: w.pac_position * 2 + 0
+        width: w.pac_position * 6 + 0
       })
     }
     w.increment_pac = function(n){
@@ -417,10 +425,12 @@ $( function() {
           w.pac_position = 0
         }
         for (var i = 0; i < n; i++){
-          w.pac_position++
-          w.draw_pac()
+          setTimeout(function(){
+            w.pac_position++
+            w.draw_pac()
+          }, i*250)
         }
-        if (w.pac_position > 306){
+        if (w.pac_position > 102){
           w.pac_paused = true
           setTimeout(function(){
             $('#pac-container').hide()
@@ -435,9 +445,93 @@ $( function() {
     }
 
     
-    $('#addresses :nth-child(3)').click()
-    $('#average_over :nth-child(3)').click()
+    $('#addresses :nth-child(1)').click()
+    $('#average_over :nth-child(1)').click()
     $('#left_right_both :nth-child(1)').click()
 
 } );
 
+
+var arr = {	
+	max: function(array) {
+		return Math.max.apply(null, array);
+	},
+	
+	min: function(array) {
+		return Math.min.apply(null, array);
+	},
+	
+	range: function(array) {
+		return arr.max(array) - arr.min(array);
+	},
+	
+	midrange: function(array) {
+		return arr.range(array) / 2;
+	},
+
+	sum: function(array) {
+		var num = 0;
+		for (var i = 0, l = array.length; i < l; i++) num += array[i];
+		return num;
+	},
+	
+	mean: function(array) {
+		return arr.sum(array) / array.length;
+	},
+	
+	median: function(array) {
+		array.sort(function(a, b) {
+			return a - b;
+		});
+		var mid = array.length / 2;
+		return mid % 1 ? array[mid - 0.5] : (array[mid - 1] + array[mid]) / 2;
+	},
+	
+	modes: function(array) {
+		if (!array.length) return [];
+		var modeMap = {},
+			maxCount = 1,
+			modes = [array[0]];
+
+		array.forEach(function(val) {
+			if (!modeMap[val]) modeMap[val] = 1;
+			else modeMap[val]++;
+
+			if (modeMap[val] > maxCount) {
+				modes = [val];
+				maxCount = modeMap[val];
+			}
+			else if (modeMap[val] === maxCount) {
+				modes.push(val);
+				maxCount = modeMap[val];
+			}
+		});
+		return modes;
+	},
+	
+	variance: function(array) {
+		var mean = arr.mean(array);
+		return arr.mean(array.map(function(num) {
+			return Math.pow(num - mean, 2);
+		}));
+	},
+	
+	standardDeviation: function(array) {
+		return Math.sqrt(arr.variance(array));
+	},
+	
+	meanAbsoluteDeviation: function(array) {
+		var mean = arr.mean(array);
+		return arr.mean(array.map(function(num) {
+			return Math.abs(num - mean);
+		}));
+	},
+	
+	zScores: function(array) {
+		var mean = arr.mean(array);
+		var standardDeviation = arr.standardDeviation(array);
+		return array.map(function(num) {
+			return (num - mean) / standardDeviation;
+		});
+	}
+};

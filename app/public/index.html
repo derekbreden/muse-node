@@ -14,7 +14,7 @@
   <body>
     <style>
       body, body > * {
-        cursor: none;
+        /*cursor: none;*/
       }
       .l1 > *:hover {
         text-decoration: underline;
@@ -33,12 +33,12 @@
       opacity: .4;
       position: absolute;
       text-align: center;
-      left: calc(50% - 100px);
+      left: calc(50% - 150px);
       top: calc(50% - 200px);
       color: #666;
       z-index: 99;
       height: 400px;
-      width: 200px;
+      width: 300px;
       box-sizing: border-box;
       font-size: 16px;
       padding: 40px 20px;
@@ -51,56 +51,47 @@
       <div style="
         "
         onclick="
-          w.reset_chart(['/muse/elements/beta_absolute','/muse/elements/theta_absolute']);
+          w.reset_chart('abdgt');
           $('#addresses').removeClass('s1 s2 s3 s4 s5 s6').addClass('s1');
         "
       >
-        Beta vs Theta
+        Alpha
       </div>
       <div style="
         "
         onclick="
-          w.reset_chart(['/muse/elements/beta_absolute','/muse/elements/delta_absolute']);
+          w.reset_chart('badgt');
           $('#addresses').removeClass('s1 s2 s3 s4 s5 s6').addClass('s2');
         "
       >
-        Beta vs Delta
+        Beta
       </div>
       <div style="
         "
         onclick="
-          w.reset_chart(['/muse/elements/beta_absolute','/muse/elements/alpha_absolute']);
+          w.reset_chart('dabgt');
           $('#addresses').removeClass('s1 s2 s3 s4 s5 s6').addClass('s3');
         "
       >
-        Beta vs Alpha
+        Delta
       </div>
       <div style="
         "
         onclick="
-          w.reset_chart(['/muse/elements/alpha_absolute','/muse/elements/beta_absolute']);
+          w.reset_chart('tabdg');
           $('#addresses').removeClass('s1 s2 s3 s4 s5 s6').addClass('s4');
         "
       >
-        Alpha vs Beta
+        Theta
       </div>
       <div style="
         "
         onclick="
-          w.reset_chart(['/muse/elements/alpha_absolute','/muse/elements/delta_absolute']);
+          w.reset_chart('gabdt');
           $('#addresses').removeClass('s1 s2 s3 s4 s5 s6').addClass('s5');
         "
       >
-        Alpha vs Delta
-      </div>
-      <div style="
-        "
-        onclick="
-          w.reset_chart(['/muse/elements/alpha_absolute','/muse/elements/theta_absolute']);
-          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6').addClass('s6');
-        "
-      >
-        Alpha vs Theta
+        Gamma
       </div>
     </div>
     
@@ -137,17 +128,8 @@
       <div style="
         "
         onclick="
-          w.reset_chart(false, 10);
-          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s2');
-        "
-      >
-        10
-      </div>
-      <div style="
-        "
-        onclick="
           w.reset_chart(false, 20);
-          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s3');
+          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s2');
         "
       >
         20
@@ -155,20 +137,29 @@
       <div style="
         "
         onclick="
-          w.reset_chart(false, 40);
-          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s4');
+          w.reset_chart(false, 100);
+          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s3');
         "
       >
-        40
+        100
       </div>
       <div style="
         "
         onclick="
           w.reset_chart(false, 200);
+          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s4');
+        "
+      >
+        200
+      </div>
+      <div style="
+        "
+        onclick="
+          w.reset_chart(false, 400);
           $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s5');
         "
       >
-        80
+        400
       </div>
     </div>
     
@@ -393,7 +384,7 @@
           style="background:#000;position:absolute;height:30px;width:0px;top:-2px;left:0;"></div>
         <div id="pac" class="f f1" style="
           position:absolute;
-          -webkit-transition: left 100ms linear, top 100ms linear;
+          -webkit-transition: left 250ms linear, top 250ms linear;
         "></div>
       </div>
     </div>
