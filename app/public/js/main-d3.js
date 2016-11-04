@@ -87,12 +87,14 @@ $( function() {
       
       
       var to_increment = 0
-      if (rank1 === 0){
+      if (rank1 === 0 && a > 0)
         to_increment = 4
-      } else {
-        if (a > 0)
-          to_increment = 2
-      }
+      if (rank1 === 0 && a <= 0)
+        to_increment = 3
+      if (rank1 !== 0 && a > 0)
+        to_increment = 2
+      if (rank1 !== 0 && a <= 0)
+        to_increment = 1
       // if (w.last_left_right_both === 'right') {
       //   if (rank2 === 0){
       //     to_increment = 2
@@ -114,11 +116,17 @@ $( function() {
       w.last_to_increment = to_increment
       
       
+      if (to_increment === 1) {
+        play_b(false, ['G3', 30])
+      }
       if (to_increment === 2) {
-        play_b(false, ['D4', 30])
+        play_b(false, ['C4', 30])
+      }
+      if (to_increment === 3) {
+        play_b(false, ['E4', 30])
       }
       if (to_increment === 4) {
-        play_b(false, ['E4', 30])
+        play_b(false, ['F4', 30])
       }
       
     }
@@ -320,7 +328,7 @@ $( function() {
        // -------------------------------------------------------------------------
     
       socket.emit('s', [addresses, average_over])
-      var n = 100
+      var n = average_over * 5
       function chart(lorr) {
           var data = [d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random )];
 
@@ -446,7 +454,7 @@ $( function() {
 
     
     $('#addresses :nth-child(1)').click()
-    $('#average_over :nth-child(1)').click()
+    $('#average_over :nth-child(3)').click()
     $('#left_right_both :nth-child(1)').click()
 
 } );

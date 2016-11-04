@@ -25,7 +25,8 @@
       .l1.s3 > *:nth-child(3),
       .l1.s4 > *:nth-child(4),
       .l1.s5 > *:nth-child(5),
-      .l1.s6 > *:nth-child(6) {
+      .l1.s6 > *:nth-child(6),
+      .l1.s7 > *:nth-child(7) {
         color: #FFF;
       }
     </style>
@@ -48,50 +49,47 @@
       justify-content: space-around;
       cursor: pointer;
     " id="addresses" class="l1 s2">
-      <div style="
-        "
-        onclick="
+      <div onclick="
           w.reset_chart('abdgt');
-          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6').addClass('s1');
-        "
-      >
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7').addClass('s1');
+      ">
         Alpha
       </div>
-      <div style="
-        "
-        onclick="
+      <div onclick="
           w.reset_chart('badgt');
-          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6').addClass('s2');
-        "
-      >
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7').addClass('s2');
+      ">
         Beta
       </div>
-      <div style="
-        "
-        onclick="
+      <div onclick="
           w.reset_chart('dabgt');
-          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6').addClass('s3');
-        "
-      >
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7').addClass('s3');
+      ">
         Delta
       </div>
-      <div style="
-        "
-        onclick="
+      <div onclick="
           w.reset_chart('tabdg');
-          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6').addClass('s4');
-        "
-      >
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7').addClass('s4');
+      ">
         Theta
       </div>
-      <div style="
-        "
-        onclick="
+      <div onclick="
+          w.reset_chart('tabg');
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7').addClass('s5');
+      ">
+        Theta (no delta)
+      </div>
+      <div onclick="
           w.reset_chart('gabdt');
-          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6').addClass('s5');
-        "
-      >
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7').addClass('s6');
+      ">
         Gamma
+      </div>
+      <div onclick="
+          w.reset_chart('gadt');
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7').addClass('s7');
+      ">
+        Gamma (no beta)
       </div>
     </div>
     
@@ -128,8 +126,17 @@
       <div style="
         "
         onclick="
-          w.reset_chart(false, 20);
+          w.reset_chart(false, 10);
           $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s2');
+        "
+      >
+        10
+      </div>
+      <div style="
+        "
+        onclick="
+          w.reset_chart(false, 20);
+          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s3');
         "
       >
         20
@@ -137,29 +144,20 @@
       <div style="
         "
         onclick="
-          w.reset_chart(false, 100);
-          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s3');
-        "
-      >
-        100
-      </div>
-      <div style="
-        "
-        onclick="
-          w.reset_chart(false, 200);
+          w.reset_chart(false, 40);
           $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s4');
         "
       >
-        200
+        40
       </div>
       <div style="
         "
         onclick="
-          w.reset_chart(false, 400);
+          w.reset_chart(false, 100);
           $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s5');
         "
       >
-        400
+        100
       </div>
     </div>
     
