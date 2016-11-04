@@ -94,7 +94,7 @@ $( function() {
       if (rank1 !== 0 && a > 0)
         to_increment = 2
       if (rank1 !== 0 && a <= 0)
-        to_increment = 1
+        to_increment = 0
       // if (w.last_left_right_both === 'right') {
       //   if (rank2 === 0){
       //     to_increment = 2
@@ -278,10 +278,10 @@ $( function() {
         ]
       var color_choices = {
         '/muse/elements/alpha_absolute': '#336699',
-        '/muse/elements/theta_absolute': '#993399',
-        '/muse/elements/beta_absolute': '#339933',
-        '/muse/elements/delta_absolute': '#990000',
-        '/muse/elements/gamma_absolute': ''
+        '/muse/elements/theta_absolute': '#993366',
+        '/muse/elements/beta_absolute': '#336699',
+        '/muse/elements/delta_absolute': '#993366',
+        '/muse/elements/gamma_absolute': '#336699'
       }
       
         // // "#33cc33",
@@ -292,7 +292,9 @@ $( function() {
       var colors = [
         '#339933',
         '#336699',
-        '#003366',
+        '#993366',
+        // color_choices[addresses[1]],
+        // color_choices[addresses[2]],
         '#003366',
         '#003366'
       ]
@@ -346,7 +348,7 @@ $( function() {
               .range( [0, width] );
 
           var y = d3.scale.linear()
-              .domain( [.1, .4] )
+              .domain( [.1, .6] )
               .range( [height, 0] );
 
           var line = d3.svg.line()
@@ -411,11 +413,14 @@ $( function() {
     }
 
     
-    w.draw_pac = function(){
+    w.draw_pac = function(speed){
       $('#pac').css({
         left: w.pac_position * 6 + 0,
         top: 0
       })
+      $('#pac')
+        .removeClass('speed125 speed166 speed250 speed500')
+        .addClass('speed' + speed)
       .removeClass('f1 f2 f3 f4 f5 f6 f7 f8')
       .addClass(
         ['f1','f2'][((Math.floor(w.pac_position)) % 2)]
@@ -432,11 +437,12 @@ $( function() {
         if (!w.pac_position) {
           w.pac_position = 0
         }
+        var speed = Math.floor(500/n)
         for (var i = 0; i < n; i++){
           setTimeout(function(){
             w.pac_position++
-            w.draw_pac()
-          }, i*250)
+            w.draw_pac(speed)
+          }, i*speed)
         }
         if (w.pac_position > 102){
           w.pac_paused = true
@@ -454,7 +460,7 @@ $( function() {
 
     
     $('#addresses :nth-child(1)').click()
-    $('#average_over :nth-child(3)').click()
+    $('#average_over :nth-child(2)').click()
     $('#left_right_both :nth-child(1)').click()
 
 } );

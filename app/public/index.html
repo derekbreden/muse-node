@@ -50,46 +50,22 @@
       cursor: pointer;
     " id="addresses" class="l1 s2">
       <div onclick="
-          w.reset_chart('abdgt');
+          w.reset_chart('gad');
           $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7').addClass('s1');
-      ">
-        Alpha
-      </div>
-      <div onclick="
-          w.reset_chart('badgt');
-          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7').addClass('s2');
-      ">
-        Beta
-      </div>
-      <div onclick="
-          w.reset_chart('dabgt');
-          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7').addClass('s3');
-      ">
-        Delta
-      </div>
-      <div onclick="
-          w.reset_chart('tabdg');
-          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7').addClass('s4');
-      ">
-        Theta
-      </div>
-      <div onclick="
-          w.reset_chart('tabg');
-          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7').addClass('s5');
-      ">
-        Theta (no delta)
-      </div>
-      <div onclick="
-          w.reset_chart('gabdt');
-          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7').addClass('s6');
       ">
         Gamma
       </div>
       <div onclick="
-          w.reset_chart('gadt');
-          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7').addClass('s7');
+          w.reset_chart('abd');
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7').addClass('s2');
       ">
-        Gamma (no beta)
+        Alpha
+      </div>
+      <div onclick="
+          w.reset_chart('tab');
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7').addClass('s3');
+      ">
+        Theta
       </div>
     </div>
     
@@ -117,17 +93,8 @@
       <div style="
         "
         onclick="
-          w.reset_chart(false, 1);
-          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s1');
-        "
-      >
-        1
-      </div>
-      <div style="
-        "
-        onclick="
           w.reset_chart(false, 10);
-          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s2');
+          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s1');
         "
       >
         10
@@ -136,10 +103,19 @@
         "
         onclick="
           w.reset_chart(false, 20);
-          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s3');
+          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s2');
         "
       >
         20
+      </div>
+      <div style="
+        "
+        onclick="
+          w.reset_chart(false, 30);
+          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s3');
+        "
+      >
+        30
       </div>
       <div style="
         "
@@ -382,10 +358,23 @@
           style="background:#000;position:absolute;height:30px;width:0px;top:-2px;left:0;"></div>
         <div id="pac" class="f f1" style="
           position:absolute;
-          -webkit-transition: left 250ms linear, top 250ms linear;
         "></div>
       </div>
     </div>
+    <style>
+      .speed125 {
+        -webkit-transition: left 125ms ease-in-out, top 125ms ease-in-out;
+      }
+      .speed166 {
+        -webkit-transition: left 166ms ease-in-out, top 166ms ease-in-out;
+      }
+      .speed250 {
+        -webkit-transition: left 250ms ease-in-out, top 250ms ease-in-out;
+      }
+      .speed500 {
+        -webkit-transition: left 500ms ease-in-out, top 500ms ease-in-out;
+      }
+    </style>
 
     
     
