@@ -1,6 +1,3 @@
-window.w = {
-  player: {}
-};
 $( function() {
 
     var play_b = function(notes_to_play, note) {
@@ -94,40 +91,93 @@ $( function() {
       if (rank1 !== 0 && a > 0)
         to_increment = 2
       if (rank1 !== 0 && a <= 0)
-        to_increment = 0
-      // if (w.last_left_right_both === 'right') {
-      //   if (rank2 === 0){
-      //     to_increment = 2
-      //   } else {
-      //     if (b > 0)
-      //       to_increment = 2
-      //   }
+        to_increment = 1
+      
+      
+      // ---------------------------------------------------------
+      // Pitch based on height
+      // ---------------------------------------------------------
+      if (to_increment > 0) {
+        
+        var notes = [
+          'F3',
+          'F#3',
+          'G3',
+          'G#3',
+          'A3',
+          'A#3',
+          'B3',
+          'C4',
+          'C#4',
+          'D4',
+          'D#4',
+          'E4',
+          'F4',
+          'G4',
+          'A4',
+          'B4'
+        ]
+        var e = Math.floor((w.last.r[0] * w.last_addresses.length / 2 - .47) * 3 * notes.length)
+        
+        var above_half = w.last.r[0] > (1 / w.last_addresses.length)
+        // if (w.last.r[0] < .5) {
+        //   e = e - 1
+        // }
+        if (e < 0) e = 0
+        $('note').html([
+          e,
+          above_half ? '✅' : '❌',
+          a<=0 ? '⬇' : '⬆',
+          // 👾
+          // 🍄
+          // ☯
+          '<div style="line-height:40px;position: absolute; bottom: 0;">'+new Array(e).join('🍄<br>')+'</div>'
+        ].join('<br>'))
+        if (e >= notes.length) e = notes.length - 1
+        var note = notes[e]
+        // if ( > .125) note = 'A3'
+        // if (w.last.r[0] > .175) note = 'B3'
+        // if (w.last.r[0] > .2) note = 'C4'
+        // if (w.last.r[0] > .25) note = 'E4'
+        // if (w.last.r[0] > .3) note = 'G4'
+        if (above_half || a >= 0)
+          play_b(false, [note, 30])
+        // to_increment = above_half ? 1 : 0
+        to_increment = e + 1
+        // if (w.lastNes) {
+        //   try{
+        //     w.lastNes.setFramerate(60 + (e - 8) * 5)
+        //   } catch (e) {
+        //     
+        //   }
+        //   w.lastNes.stop()
+        //   w.lastNes.start()
+        // }
+      }
+      // ---------------------------------------------------------
+
+
+
+
+      // ---------------------------------------------------------
+      // Pitch based on success
+      // ---------------------------------------------------------
+      // if (to_increment === 1) {
+      //   play_b(false, ['G3', 30])
       // }
-      // if (w.last_left_right_both === 'both') {
-      //   if (rank1 === 0 && rank2 === 0){
-      //     to_increment = 2
-      //   } else {
-      //     if (a + b > 0)
-      //       to_increment = 2
-      //   }
+      // if (to_increment === 2) {
+      //   play_b(false, ['C4', 30])
       // }
+      // if (to_increment === 3) {
+      //   play_b(false, ['E4', 30])
+      // }
+      // if (to_increment === 4) {
+      //   play_b(false, ['F4', 30])
+      // }
+      // ---------------------------------------------------------
       if (to_increment)
         w.increment_pac(to_increment)
       w.last_to_increment = to_increment
-      
-      
-      if (to_increment === 1) {
-        play_b(false, ['G3', 30])
-      }
-      if (to_increment === 2) {
-        play_b(false, ['C4', 30])
-      }
-      if (to_increment === 3) {
-        play_b(false, ['E4', 30])
-      }
-      if (to_increment === 4) {
-        play_b(false, ['F4', 30])
-      }
       
     }
     w.last_last = {
@@ -143,6 +193,8 @@ $( function() {
 
 
     w.reset_chart = function(addresses_in, average_over_in, left_right_both_in){
+      w.last = {l:[],r:[]}
+      w.last_real_value = {l:[],r:[]}
       if (addresses_in) {
         addresses_in = addresses_in.split('').map(function(addy){
           return '/muse/elements/' + {
@@ -298,6 +350,21 @@ $( function() {
         '#003366',
         '#003366'
       ]
+      if (addresses.length == 2) {
+        colors = [
+          '#339933',
+          '#993366'
+        ]
+      }
+      if (addresses.length == 5) {
+        colors = [
+          '#339933',
+          '#336699',
+          '#996633',
+          '#993366',
+          '#993333'
+        ]
+      }
       
       w.notes = [
         // 'A4',
@@ -331,6 +398,7 @@ $( function() {
     
       socket.emit('s', [addresses, average_over])
       var n = average_over * 5
+      n = n > 100 ? 100 : n
       function chart(lorr) {
           var data = [d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random ),d3.range( n ).map( random )];
 
@@ -347,8 +415,12 @@ $( function() {
               .domain( [0, n] )
               .range( [0, width] );
 
+          
+          eh = 1 / addresses.length
+          this_domain = [0, eh + eh]
+
           var y = d3.scale.linear()
-              .domain( [.1, .6] )
+              .domain( this_domain )
               .range( [height, 0] );
 
           var line = d3.svg.line()
@@ -459,8 +531,8 @@ $( function() {
     }
 
     
-    $('#addresses :nth-child(1)').click()
-    $('#average_over :nth-child(2)').click()
+    $('#addresses :nth-child(3)').click()
+    $('#average_over :nth-child(5)').click()
     $('#left_right_both :nth-child(1)').click()
 
 } );

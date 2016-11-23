@@ -82,8 +82,29 @@ io.on('connection', function (socket) {
 		// console.log(r[b], arr.median(r[b]))
     return arr.mean(r[b])
   }
+    var locked = false;
     var udpBind = last_udp_bind = function (oscData) {
       oscData = oscData[2]
+      if (locked) return
+      // if (oscData[0] === '/muse/elements/blink') {
+      //   locked = true
+      //   setTimeout(function(){
+      //     locked = false;
+      //   }, 200)
+      // }
+      // if (oscData[0] === '/muse/elements/horseshoe') {
+      //   if (
+      //     oscData[1] !== 1 ||
+      //     oscData[2] !== 1 ||
+      //     oscData[3] !== 1 ||
+      //     oscData[4] !== 1
+      //   ){
+      //     locked = true
+      //     setTimeout(function(){
+      //       locked = false;
+      //     }, 1000)
+      //   }
+      // }
       var i = addresses.indexOf(oscData[0])
       // console.log(oscData[0], addresses)
       if (i !== -1) {

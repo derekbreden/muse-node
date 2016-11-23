@@ -63,7 +63,8 @@ function Conductor(tuning, rhythm) {
     conductor.packs = packs;
     conductor.pitches = packs.tuning[tuning];
     conductor.notes = packs.rhythm[rhythm];
-    conductor.audioContext = new AudioContext();
+    conductor.audioContext = window.lastAudio || new AudioContext();
+    window.lastAudio = conductor.audioContext
     conductor.masterVolumeLevel = null;
     conductor.masterVolume = conductor.audioContext.createGain();
     conductor.masterVolume.connect(conductor.audioContext.destination);

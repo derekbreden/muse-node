@@ -7,11 +7,57 @@
 		<script type="text/javascript"  src="js/d3.js"></script>
 		<script type="text/javascript"  src="js/band.js"></script>
 		<script type="text/javascript"  src="js/main-d3.js"></script>
+		<script type="text/javascript"  src="js/audio.js"></script>
+		<script type="text/javascript"  src="js/jsnes.js"></script>
     	<link href="css/muse.css" rel="stylesheet">
     	<link href="css/bootstrap.min.css" rel="stylesheet">
   </head>
 
   <body>
+    <style>
+      note{
+        display: block;
+        position: absolute;
+        top: 20px;
+        opacity: .5;
+        color: #FFF;
+        right: 20px;
+        bottom: 20px;
+        height: auto;
+        font-size: 36px;
+        text-align: center;;
+      }
+    </style>
+    <note></note>
+    <style>
+    .nes {
+      overflow: hidden;
+      width: 250px;
+      height: 200px;
+    }
+    </style>
+    <div class="nes"></div>
+    
+    <script>
+    window.w = {
+      player: {}
+    }
+    // $(function() {
+    //   w.jsnes = $('.nes').text('').JSNESUI({
+    //     "Working": [
+    //       ['Super Mario Bros. 3', '/images/mario.nes']
+    //     ]
+    //   })
+    //   new JSNES({
+    //     'swfPath': '/swf/',
+    //     'ui': w.jsnes
+    //   });
+    //   $('.nes select').val('/images/mario.nes');
+    //   $('.nes select').trigger('change')
+    // });
+    </script>
+    
+    
     <style>
       body, body > * {
         /*cursor: none;*/
@@ -26,7 +72,12 @@
       .l1.s4 > *:nth-child(4),
       .l1.s5 > *:nth-child(5),
       .l1.s6 > *:nth-child(6),
-      .l1.s7 > *:nth-child(7) {
+      .l1.s7 > *:nth-child(7),
+      .l1.s8 > *:nth-child(8),
+      .l1.s9 > *:nth-child(9),
+      .l1.s10 > *:nth-child(10),
+      .l1.s11 > *:nth-child(11),
+      .l1.s12 > *:nth-child(12) {
         color: #FFF;
       }
     </style>
@@ -50,22 +101,64 @@
       cursor: pointer;
     " id="addresses" class="l1 s2">
       <div onclick="
-          w.reset_chart('gad');
-          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7').addClass('s1');
+          w.reset_chart('gabtd');
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 s11 s12').addClass('s1');
       ">
-        Gamma
+        Gamma (ABTD)
       </div>
       <div onclick="
-          w.reset_chart('abd');
-          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7').addClass('s2');
+          w.reset_chart('bagtd');
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 s11 s12').addClass('s2');
       ">
-        Alpha
+        Beta (AGTD)
       </div>
       <div onclick="
-          w.reset_chart('tab');
-          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7').addClass('s3');
+          w.reset_chart('atgbd');
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 s11 s12').addClass('s3');
       ">
-        Theta
+        Alpha (TGBD)
+      </div>
+      <div onclick="
+          w.reset_chart('tabgd');
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 s11 s12').addClass('s4');
+      ">
+        Theta (ABGD)
+      </div>
+      <div onclick="
+          w.reset_chart('ba');
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 s11 s12').addClass('s5');
+      ">
+        Beta (A)
+      </div>
+      <div onclick="
+          w.reset_chart('gb');
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 s11 s12').addClass('s6');
+      ">
+        Gamma (B)
+      </div>
+      <div onclick="
+          w.reset_chart('td');
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 s11 s12').addClass('s7');
+      ">
+        Theta (D)
+      </div>
+      <div onclick="
+          w.reset_chart('ta');
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 s11 s12').addClass('s8');
+      ">
+        Theta (A)
+      </div>
+      <div onclick="
+          w.reset_chart('tag');
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 s11 s12').addClass('s9');
+      ">
+        Theta (AG)
+      </div>
+      <div onclick="
+          w.reset_chart('ad');
+          $('#addresses').removeClass('s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 s11 s12').addClass('s10');
+      ">
+        Alpha (D)
       </div>
     </div>
     
@@ -102,17 +195,8 @@
       <div style="
         "
         onclick="
-          w.reset_chart(false, 20);
-          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s2');
-        "
-      >
-        20
-      </div>
-      <div style="
-        "
-        onclick="
           w.reset_chart(false, 30);
-          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s3');
+          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s2');
         "
       >
         30
@@ -121,7 +205,7 @@
         "
         onclick="
           w.reset_chart(false, 40);
-          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s4');
+          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s3');
         "
       >
         40
@@ -130,10 +214,28 @@
         "
         onclick="
           w.reset_chart(false, 100);
-          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s5');
+          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s4');
         "
       >
         100
+      </div>
+      <div style="
+        "
+        onclick="
+          w.reset_chart(false, 200);
+          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s5');
+        "
+      >
+        200
+      </div>
+      <div style="
+        "
+        onclick="
+          w.reset_chart(false, 400);
+          $('#average_over').removeClass('s1 s2 s3 s4 s5 s6').addClass('s6');
+        "
+      >
+        400
       </div>
     </div>
     
